@@ -1112,8 +1112,8 @@ typedef npy_clongdouble __pyx_t_5numpy_clongdouble_t;
  */
 typedef npy_cdouble __pyx_t_5numpy_complex_t;
 
-/* "Perceptron.pyx":11
- * 
+/* "Perceptron.pyx":12
+ * import math
  * 
  * cdef class Perceptron:             # <<<<<<<<<<<<<<
  *     cdef np.ndarray weigths
@@ -1127,15 +1127,17 @@ struct __pyx_obj_10Perceptron_Perceptron {
   PyObject *train_x;
   PyObject *train_d;
   PyObject *error;
+  PyObject *type_function;
 };
 
 
 
 struct __pyx_vtabstruct_10Perceptron_Perceptron {
-  PyObject *(*train)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, PyObject *, int, double, PyObject *, int __pyx_skip_dispatch);
+  PyObject *(*train)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, PyObject *, int, double, PyObject *, PyObject *, int __pyx_skip_dispatch);
   PyObject *(*per_epock)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, int __pyx_skip_dispatch);
   PyObject *(*activate_function)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, int __pyx_skip_dispatch);
-  PyObject *(*adjust_weigth)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, double, int __pyx_skip_dispatch);
+  PyObject *(*diff_function)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, int __pyx_skip_dispatch);
+  PyObject *(*adjust_weigth)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, double, PyObject *, int __pyx_skip_dispatch);
   PyObject *(*predict)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, int __pyx_skip_dispatch);
   PyObject *(*get_weights)(struct __pyx_obj_10Perceptron_Perceptron *, int __pyx_skip_dispatch);
 };
@@ -1389,6 +1391,22 @@ static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
 }
 #else
 #define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
+#endif
+
+/* PyIntBinop.proto */
+#if !CYTHON_COMPILING_IN_PYPY
+static PyObject* __Pyx_PyInt_AddCObj(PyObject *op1, PyObject *op2, long intval, int inplace);
+#else
+#define __Pyx_PyInt_AddCObj(op1, op2, intval, inplace)\
+    (inplace ? PyNumber_InPlaceAdd(op1, op2) : PyNumber_Add(op1, op2))
+#endif
+
+/* PyIntBinop.proto */
+#if !CYTHON_COMPILING_IN_PYPY
+static PyObject* __Pyx_PyInt_SubtractCObj(PyObject *op1, PyObject *op2, long intval, int inplace);
+#else
+#define __Pyx_PyInt_SubtractCObj(op1, op2, intval, inplace)\
+    (inplace ? PyNumber_InPlaceSubtract(op1, op2) : PyNumber_Subtract(op1, op2))
 #endif
 
 /* PyErrExceptionMatches.proto */
@@ -1686,10 +1704,11 @@ static int __Pyx_check_binary_version(void);
 /* InitStrings.proto */
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
-static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_train_x, PyObject *__pyx_v_train_d, int __pyx_v_epocks, double __pyx_v_rate_learning_final, PyObject *__pyx_v_rule, int __pyx_skip_dispatch); /* proto*/
+static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_train_x, PyObject *__pyx_v_train_d, int __pyx_v_epocks, double __pyx_v_rate_learning_final, PyObject *__pyx_v_rule, PyObject *__pyx_v_type_function, int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_f_10Perceptron_10Perceptron_per_epock(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_row, int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_f_10Perceptron_10Perceptron_activate_function(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x, int __pyx_skip_dispatch); /* proto*/
-static PyObject *__pyx_f_10Perceptron_10Perceptron_adjust_weigth(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x, double __pyx_v_error, int __pyx_skip_dispatch); /* proto*/
+static PyObject *__pyx_f_10Perceptron_10Perceptron_diff_function(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_y, int __pyx_skip_dispatch); /* proto*/
+static PyObject *__pyx_f_10Perceptron_10Perceptron_adjust_weigth(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x, double __pyx_v_error, PyObject *__pyx_v_y, int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_f_10Perceptron_10Perceptron_predict(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x, int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_f_10Perceptron_10Perceptron_get_weights(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
 
@@ -1734,10 +1753,15 @@ static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_RuntimeError;
 static PyObject *__pyx_builtin_ImportError;
+static const char __pyx_k_[] = "";
 static const char __pyx_k_T[] = "T";
+static const char __pyx_k_b[] = "b";
+static const char __pyx_k_l[] = "l";
 static const char __pyx_k_x[] = "x";
+static const char __pyx_k_y[] = "y";
 static const char __pyx_k_np[] = "np";
 static const char __pyx_k_dot[] = "dot";
+static const char __pyx_k_exp[] = "exp";
 static const char __pyx_k_loc[] = "loc";
 static const char __pyx_k_new[] = "__new__";
 static const char __pyx_k_axis[] = "axis";
@@ -1745,6 +1769,7 @@ static const char __pyx_k_dict[] = "__dict__";
 static const char __pyx_k_erro[] = "erro";
 static const char __pyx_k_join[] = "join";
 static const char __pyx_k_main[] = "__main__";
+static const char __pyx_k_math[] = "math";
 static const char __pyx_k_mean[] = "mean";
 static const char __pyx_k_name[] = "__name__";
 static const char __pyx_k_rule[] = "rule";
@@ -1787,7 +1812,9 @@ static const char __pyx_k_RuntimeError[] = "RuntimeError";
 static const char __pyx_k_pyx_checksum[] = "__pyx_checksum";
 static const char __pyx_k_stringsource[] = "stringsource";
 static const char __pyx_k_adjust_weigth[] = "adjust_weigth";
+static const char __pyx_k_diff_function[] = "diff_function";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
+static const char __pyx_k_type_function[] = "type_function";
 static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_activate_function[] = "activate_function";
@@ -1799,15 +1826,16 @@ static const char __pyx_k_Project_Perceptron_Simples_util[] = "\nProject: Percep
 static const char __pyx_k_numpy_core_multiarray_failed_to[] = "numpy.core.multiarray failed to import";
 static const char __pyx_k_unknown_dtype_code_in_numpy_pxd[] = "unknown dtype code in numpy.pxd (%d)";
 static const char __pyx_k_Format_string_allocated_too_shor[] = "Format string allocated too short, see comment in numpy.pxd";
-static const char __pyx_k_Incompatible_checksums_s_vs_0xdf[] = "Incompatible checksums (%s vs 0xdf084dc = (error, rate_learning, train_d, train_x, weigths))";
+static const char __pyx_k_Incompatible_checksums_s_vs_0x74[] = "Incompatible checksums (%s vs 0x74b76dc = (error, rate_learning, train_d, train_x, type_function, weigths))";
 static const char __pyx_k_Non_native_byte_order_not_suppor[] = "Non-native byte order not supported";
 static const char __pyx_k_ndarray_is_not_Fortran_contiguou[] = "ndarray is not Fortran contiguous";
 static const char __pyx_k_numpy_core_umath_failed_to_impor[] = "numpy.core.umath failed to import";
 static const char __pyx_k_Format_string_allocated_too_shor_2[] = "Format string allocated too short.";
+static PyObject *__pyx_kp_s_;
 static PyObject *__pyx_kp_u_Format_string_allocated_too_shor;
 static PyObject *__pyx_kp_u_Format_string_allocated_too_shor_2;
 static PyObject *__pyx_n_s_ImportError;
-static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0xdf;
+static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0x74;
 static PyObject *__pyx_kp_u_Non_native_byte_order_not_suppor;
 static PyObject *__pyx_n_s_Perceptron;
 static PyObject *__pyx_n_s_PickleError;
@@ -1819,20 +1847,25 @@ static PyObject *__pyx_n_s_adjust_weigth;
 static PyObject *__pyx_n_s_apply;
 static PyObject *__pyx_n_s_array;
 static PyObject *__pyx_n_s_axis;
+static PyObject *__pyx_n_s_b;
 static PyObject *__pyx_n_s_choice;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_dict;
+static PyObject *__pyx_n_s_diff_function;
 static PyObject *__pyx_n_s_dot;
 static PyObject *__pyx_n_s_epocks;
 static PyObject *__pyx_n_s_erro;
 static PyObject *__pyx_n_s_error;
+static PyObject *__pyx_n_s_exp;
 static PyObject *__pyx_n_s_get_weights;
 static PyObject *__pyx_n_s_getstate;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_index;
 static PyObject *__pyx_n_s_join;
+static PyObject *__pyx_n_s_l;
 static PyObject *__pyx_n_s_loc;
 static PyObject *__pyx_n_s_main;
+static PyObject *__pyx_n_s_math;
 static PyObject *__pyx_n_s_mean;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_kp_u_ndarray_is_not_C_contiguous;
@@ -1869,29 +1902,33 @@ static PyObject *__pyx_n_s_tolist;
 static PyObject *__pyx_n_s_train;
 static PyObject *__pyx_n_s_train_d;
 static PyObject *__pyx_n_s_train_x;
+static PyObject *__pyx_n_s_type_function;
 static PyObject *__pyx_kp_u_unknown_dtype_code_in_numpy_pxd;
 static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_values;
 static PyObject *__pyx_n_s_x;
+static PyObject *__pyx_n_s_y;
 static int __pyx_pf_10Perceptron_10Perceptron___init__(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_10Perceptron_10Perceptron_2train(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_train_x, PyObject *__pyx_v_train_d, int __pyx_v_epocks, double __pyx_v_rate_learning_final, PyObject *__pyx_v_rule); /* proto */
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_2train(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_train_x, PyObject *__pyx_v_train_d, int __pyx_v_epocks, double __pyx_v_rate_learning_final, PyObject *__pyx_v_rule, PyObject *__pyx_v_type_function); /* proto */
 static PyObject *__pyx_pf_10Perceptron_10Perceptron_4per_epock(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_row); /* proto */
 static PyObject *__pyx_pf_10Perceptron_10Perceptron_6activate_function(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x); /* proto */
-static PyObject *__pyx_pf_10Perceptron_10Perceptron_8adjust_weigth(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x, double __pyx_v_error); /* proto */
-static PyObject *__pyx_pf_10Perceptron_10Perceptron_10predict(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x); /* proto */
-static PyObject *__pyx_pf_10Perceptron_10Perceptron_12get_weights(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_10Perceptron_10Perceptron_16__setstate_cython__(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v___pyx_state); /* proto */
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_8diff_function(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_y); /* proto */
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_10adjust_weigth(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x, double __pyx_v_error, PyObject *__pyx_v_y); /* proto */
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_12predict(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x); /* proto */
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_14get_weights(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_16__reduce_cython__(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_18__setstate_cython__(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_10Perceptron___pyx_unpickle_Perceptron(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static PyObject *__pyx_tp_new_10Perceptron_Perceptron(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static PyObject *__pyx_float_0_5;
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
-static PyObject *__pyx_int_233866460;
+static PyObject *__pyx_int_2;
+static PyObject *__pyx_int_122386140;
 static PyObject *__pyx_int_neg_1;
-static PyObject *__pyx_slice_;
-static PyObject *__pyx_tuple__2;
+static PyObject *__pyx_slice__2;
 static PyObject *__pyx_tuple__3;
 static PyObject *__pyx_tuple__4;
 static PyObject *__pyx_tuple__5;
@@ -1899,11 +1936,12 @@ static PyObject *__pyx_tuple__6;
 static PyObject *__pyx_tuple__7;
 static PyObject *__pyx_tuple__8;
 static PyObject *__pyx_tuple__9;
-static PyObject *__pyx_codeobj__10;
+static PyObject *__pyx_tuple__10;
+static PyObject *__pyx_codeobj__11;
 /* Late includes */
 
-/* "Perceptron.pyx":18
- *     cdef list error
+/* "Perceptron.pyx":20
+ *     cdef str type_function
  * 
  *     def __init__(self):             # <<<<<<<<<<<<<<
  *         self.weigths = np.array([])
@@ -1935,19 +1973,19 @@ static int __pyx_pf_10Perceptron_10Perceptron___init__(struct __pyx_obj_10Percep
   PyObject *__pyx_t_4 = NULL;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "Perceptron.pyx":19
+  /* "Perceptron.pyx":21
  * 
  *     def __init__(self):
  *         self.weigths = np.array([])             # <<<<<<<<<<<<<<
  *         self.rate_learning = 0.5
  *         self.train_x = None
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -1962,17 +2000,17 @@ static int __pyx_pf_10Perceptron_10Perceptron___init__(struct __pyx_obj_10Percep
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 19, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 19, __pyx_L1_error)
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 21, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->weigths);
   __Pyx_DECREF(((PyObject *)__pyx_v_self->weigths));
   __pyx_v_self->weigths = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "Perceptron.pyx":20
+  /* "Perceptron.pyx":22
  *     def __init__(self):
  *         self.weigths = np.array([])
  *         self.rate_learning = 0.5             # <<<<<<<<<<<<<<
@@ -1981,7 +2019,7 @@ static int __pyx_pf_10Perceptron_10Perceptron___init__(struct __pyx_obj_10Percep
  */
   __pyx_v_self->rate_learning = 0.5;
 
-  /* "Perceptron.pyx":21
+  /* "Perceptron.pyx":23
  *         self.weigths = np.array([])
  *         self.rate_learning = 0.5
  *         self.train_x = None             # <<<<<<<<<<<<<<
@@ -1994,12 +2032,12 @@ static int __pyx_pf_10Perceptron_10Perceptron___init__(struct __pyx_obj_10Percep
   __Pyx_DECREF(__pyx_v_self->train_x);
   __pyx_v_self->train_x = Py_None;
 
-  /* "Perceptron.pyx":22
+  /* "Perceptron.pyx":24
  *         self.rate_learning = 0.5
  *         self.train_x = None
  *         self.train_d = None             # <<<<<<<<<<<<<<
  *         self.error = []
- * 
+ *         self.type_function = ''
  */
   __Pyx_INCREF(Py_None);
   __Pyx_GIVEREF(Py_None);
@@ -2007,14 +2045,14 @@ static int __pyx_pf_10Perceptron_10Perceptron___init__(struct __pyx_obj_10Percep
   __Pyx_DECREF(__pyx_v_self->train_d);
   __pyx_v_self->train_d = Py_None;
 
-  /* "Perceptron.pyx":23
+  /* "Perceptron.pyx":25
  *         self.train_x = None
  *         self.train_d = None
  *         self.error = []             # <<<<<<<<<<<<<<
+ *         self.type_function = ''
  * 
- *     cpdef train(self,train_x, train_d, int epocks, double rate_learning_final, str rule):
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 23, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 25, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->error);
@@ -2022,8 +2060,21 @@ static int __pyx_pf_10Perceptron_10Perceptron___init__(struct __pyx_obj_10Percep
   __pyx_v_self->error = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "Perceptron.pyx":18
- *     cdef list error
+  /* "Perceptron.pyx":26
+ *         self.train_d = None
+ *         self.error = []
+ *         self.type_function = ''             # <<<<<<<<<<<<<<
+ * 
+ *     cpdef train(self,train_x, train_d, int epocks, double rate_learning_final, str rule, str type_function):
+ */
+  __Pyx_INCREF(__pyx_kp_s_);
+  __Pyx_GIVEREF(__pyx_kp_s_);
+  __Pyx_GOTREF(__pyx_v_self->type_function);
+  __Pyx_DECREF(__pyx_v_self->type_function);
+  __pyx_v_self->type_function = __pyx_kp_s_;
+
+  /* "Perceptron.pyx":20
+ *     cdef str type_function
  * 
  *     def __init__(self):             # <<<<<<<<<<<<<<
  *         self.weigths = np.array([])
@@ -2045,16 +2096,16 @@ static int __pyx_pf_10Perceptron_10Perceptron___init__(struct __pyx_obj_10Percep
   return __pyx_r;
 }
 
-/* "Perceptron.pyx":25
- *         self.error = []
+/* "Perceptron.pyx":28
+ *         self.type_function = ''
  * 
- *     cpdef train(self,train_x, train_d, int epocks, double rate_learning_final, str rule):             # <<<<<<<<<<<<<<
+ *     cpdef train(self,train_x, train_d, int epocks, double rate_learning_final, str rule, str type_function):             # <<<<<<<<<<<<<<
  *         # Initialize weigths
  *         self.weigths = np.random.random((1,train_x.shape[1] + 1))
  */
 
 static PyObject *__pyx_pw_10Perceptron_10Perceptron_3train(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_train_x, PyObject *__pyx_v_train_d, int __pyx_v_epocks, double __pyx_v_rate_learning_final, PyObject *__pyx_v_rule, int __pyx_skip_dispatch) {
+static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_train_x, PyObject *__pyx_v_train_d, int __pyx_v_epocks, double __pyx_v_rate_learning_final, PyObject *__pyx_v_rule, PyObject *__pyx_v_type_function, int __pyx_skip_dispatch) {
   int __pyx_v_epock;
   PyObject *__pyx_v_dataset = NULL;
   PyObject *__pyx_r = NULL;
@@ -2069,9 +2120,10 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
   PyObject *__pyx_t_8 = NULL;
   int __pyx_t_9;
   int __pyx_t_10;
-  int __pyx_t_11;
+  Py_ssize_t __pyx_t_11;
   int __pyx_t_12;
   int __pyx_t_13;
+  int __pyx_t_14;
   __Pyx_RefNannySetupContext("train", 0);
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
@@ -2083,13 +2135,13 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
     else {
       PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_train); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 25, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_train); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_10Perceptron_10Perceptron_3train)) {
         __Pyx_XDECREF(__pyx_r);
-        __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_epocks); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 25, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_epocks); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 28, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_rate_learning_final); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 25, __pyx_L1_error)
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_rate_learning_final); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 28, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -2106,8 +2158,8 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
         }
         #if CYTHON_FAST_PYCALL
         if (PyFunction_Check(__pyx_t_5)) {
-          PyObject *__pyx_temp[6] = {__pyx_t_6, __pyx_v_train_x, __pyx_v_train_d, __pyx_t_3, __pyx_t_4, __pyx_v_rule};
-          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 5+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 25, __pyx_L1_error)
+          PyObject *__pyx_temp[7] = {__pyx_t_6, __pyx_v_train_x, __pyx_v_train_d, __pyx_t_3, __pyx_t_4, __pyx_v_rule, __pyx_v_type_function};
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 6+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -2116,8 +2168,8 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
         #endif
         #if CYTHON_FAST_PYCCALL
         if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
-          PyObject *__pyx_temp[6] = {__pyx_t_6, __pyx_v_train_x, __pyx_v_train_d, __pyx_t_3, __pyx_t_4, __pyx_v_rule};
-          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 5+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 25, __pyx_L1_error)
+          PyObject *__pyx_temp[7] = {__pyx_t_6, __pyx_v_train_x, __pyx_v_train_d, __pyx_t_3, __pyx_t_4, __pyx_v_rule, __pyx_v_type_function};
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 6+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -2125,7 +2177,7 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
         } else
         #endif
         {
-          __pyx_t_8 = PyTuple_New(5+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 25, __pyx_L1_error)
+          __pyx_t_8 = PyTuple_New(6+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 28, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
           if (__pyx_t_6) {
             __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -2143,9 +2195,12 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
           __Pyx_INCREF(__pyx_v_rule);
           __Pyx_GIVEREF(__pyx_v_rule);
           PyTuple_SET_ITEM(__pyx_t_8, 4+__pyx_t_7, __pyx_v_rule);
+          __Pyx_INCREF(__pyx_v_type_function);
+          __Pyx_GIVEREF(__pyx_v_type_function);
+          PyTuple_SET_ITEM(__pyx_t_8, 5+__pyx_t_7, __pyx_v_type_function);
           __pyx_t_3 = 0;
           __pyx_t_4 = 0;
-          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 25, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         }
@@ -2168,30 +2223,30 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
     #endif
   }
 
-  /* "Perceptron.pyx":27
- *     cpdef train(self,train_x, train_d, int epocks, double rate_learning_final, str rule):
+  /* "Perceptron.pyx":30
+ *     cpdef train(self,train_x, train_d, int epocks, double rate_learning_final, str rule, str type_function):
  *         # Initialize weigths
  *         self.weigths = np.random.random((1,train_x.shape[1] + 1))             # <<<<<<<<<<<<<<
+ *         self.type_function = type_function
  * 
- *         cdef int epock
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_random); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_random); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_random); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_random); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_train_x, __pyx_n_s_shape); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_train_x, __pyx_n_s_shape); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_8 = __Pyx_GetItemInt(__pyx_t_5, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_GetItemInt(__pyx_t_5, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyInt_AddObjC(__pyx_t_8, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyInt_AddObjC(__pyx_t_8, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_INCREF(__pyx_int_1);
   __Pyx_GIVEREF(__pyx_int_1);
@@ -2212,17 +2267,30 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
   __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_5, __pyx_t_8) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_8);
   __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 27, __pyx_L1_error)
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->weigths);
   __Pyx_DECREF(((PyObject *)__pyx_v_self->weigths));
   __pyx_v_self->weigths = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "Perceptron.pyx":30
+  /* "Perceptron.pyx":31
+ *         # Initialize weigths
+ *         self.weigths = np.random.random((1,train_x.shape[1] + 1))
+ *         self.type_function = type_function             # <<<<<<<<<<<<<<
+ * 
+ *         cdef int epock
+ */
+  __Pyx_INCREF(__pyx_v_type_function);
+  __Pyx_GIVEREF(__pyx_v_type_function);
+  __Pyx_GOTREF(__pyx_v_self->type_function);
+  __Pyx_DECREF(__pyx_v_self->type_function);
+  __pyx_v_self->type_function = __pyx_v_type_function;
+
+  /* "Perceptron.pyx":34
  * 
  *         cdef int epock
  *         for epock in range(epocks):             # <<<<<<<<<<<<<<
@@ -2234,14 +2302,14 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
   for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
     __pyx_v_epock = __pyx_t_10;
 
-    /* "Perceptron.pyx":31
+    /* "Perceptron.pyx":35
  *         cdef int epock
  *         for epock in range(epocks):
  *             self.error = []             # <<<<<<<<<<<<<<
  *             self.train_x = train_x.loc[np.random.choice(
  *                     train_x.index, train_x.shape[0], replace = False
  */
-    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
+    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_1);
     __Pyx_GOTREF(__pyx_v_self->error);
@@ -2249,47 +2317,47 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
     __pyx_v_self->error = ((PyObject*)__pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "Perceptron.pyx":32
+    /* "Perceptron.pyx":36
  *         for epock in range(epocks):
  *             self.error = []
  *             self.train_x = train_x.loc[np.random.choice(             # <<<<<<<<<<<<<<
  *                     train_x.index, train_x.shape[0], replace = False
  *             )] # Shuffle train x
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_train_x, __pyx_n_s_loc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_train_x, __pyx_n_s_loc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 36, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_random); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_random); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 36, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_choice); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_choice); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 36, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-    /* "Perceptron.pyx":33
+    /* "Perceptron.pyx":37
  *             self.error = []
  *             self.train_x = train_x.loc[np.random.choice(
  *                     train_x.index, train_x.shape[0], replace = False             # <<<<<<<<<<<<<<
  *             )] # Shuffle train x
  *             self.train_d = train_d.loc[self.train_x.index] # Shuffle train d
  */
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_train_x, __pyx_n_s_index); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 33, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_train_x, __pyx_n_s_index); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 37, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_train_x, __pyx_n_s_shape); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 33, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_train_x, __pyx_n_s_shape); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 37, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_5, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 33, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_5, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 37, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-    /* "Perceptron.pyx":32
+    /* "Perceptron.pyx":36
  *         for epock in range(epocks):
  *             self.error = []
  *             self.train_x = train_x.loc[np.random.choice(             # <<<<<<<<<<<<<<
  *                     train_x.index, train_x.shape[0], replace = False
  *             )] # Shuffle train x
  */
-    __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 36, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_8);
     PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_8);
@@ -2298,30 +2366,30 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
     __pyx_t_8 = 0;
     __pyx_t_4 = 0;
 
-    /* "Perceptron.pyx":33
+    /* "Perceptron.pyx":37
  *             self.error = []
  *             self.train_x = train_x.loc[np.random.choice(
  *                     train_x.index, train_x.shape[0], replace = False             # <<<<<<<<<<<<<<
  *             )] # Shuffle train x
  *             self.train_d = train_d.loc[self.train_x.index] # Shuffle train d
  */
-    __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 33, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 37, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_replace, Py_False) < 0) __PYX_ERR(0, 33, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_replace, Py_False) < 0) __PYX_ERR(0, 37, __pyx_L1_error)
 
-    /* "Perceptron.pyx":32
+    /* "Perceptron.pyx":36
  *         for epock in range(epocks):
  *             self.error = []
  *             self.train_x = train_x.loc[np.random.choice(             # <<<<<<<<<<<<<<
  *                     train_x.index, train_x.shape[0], replace = False
  *             )] # Shuffle train x
  */
-    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 36, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_t_8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_t_8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 36, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -2331,18 +2399,18 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
     __pyx_v_self->train_x = __pyx_t_4;
     __pyx_t_4 = 0;
 
-    /* "Perceptron.pyx":35
+    /* "Perceptron.pyx":39
  *                     train_x.index, train_x.shape[0], replace = False
  *             )] # Shuffle train x
  *             self.train_d = train_d.loc[self.train_x.index] # Shuffle train d             # <<<<<<<<<<<<<<
  * 
  *             # Otmizing rate learning
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_train_d, __pyx_n_s_loc); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 35, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_train_d, __pyx_n_s_loc); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 39, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->train_x, __pyx_n_s_index); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 35, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->train_x, __pyx_n_s_index); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 39, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_t_4, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_t_4, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 39, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -2352,7 +2420,7 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
     __pyx_v_self->train_d = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "Perceptron.pyx":38
+    /* "Perceptron.pyx":42
  * 
  *             # Otmizing rate learning
  *             self.rate_learning *= (self.rate_learning/rate_learning_final)**(epock/epocks)             # <<<<<<<<<<<<<<
@@ -2361,26 +2429,26 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
  */
     if (unlikely(__pyx_v_rate_learning_final == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 38, __pyx_L1_error)
+      __PYX_ERR(0, 42, __pyx_L1_error)
     }
     if (unlikely(__pyx_v_epocks == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "integer division or modulo by zero");
-      __PYX_ERR(0, 38, __pyx_L1_error)
+      __PYX_ERR(0, 42, __pyx_L1_error)
     }
     else if (sizeof(int) == sizeof(long) && (!(((int)-1) > 0)) && unlikely(__pyx_v_epocks == (int)-1)  && unlikely(UNARY_NEG_WOULD_OVERFLOW(__pyx_v_epock))) {
       PyErr_SetString(PyExc_OverflowError, "value too large to perform division");
-      __PYX_ERR(0, 38, __pyx_L1_error)
+      __PYX_ERR(0, 42, __pyx_L1_error)
     }
     __pyx_v_self->rate_learning = (__pyx_v_self->rate_learning * pow((__pyx_v_self->rate_learning / __pyx_v_rate_learning_final), ((double)__Pyx_div_int(__pyx_v_epock, __pyx_v_epocks))));
 
-    /* "Perceptron.pyx":41
+    /* "Perceptron.pyx":45
  * 
  *             # Create a dataframe with x and d
  *             dataset = train_x.join(train_d)             # <<<<<<<<<<<<<<
  * 
  *             # Activite function
  */
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_train_x, __pyx_n_s_join); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 41, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_train_x, __pyx_n_s_join); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __pyx_t_4 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
@@ -2394,105 +2462,132 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_train(struct __pyx_obj_10Perc
     }
     __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_8, __pyx_t_4, __pyx_v_train_d) : __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_v_train_d);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 41, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_XDECREF_SET(__pyx_v_dataset, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "Perceptron.pyx":44
+    /* "Perceptron.pyx":48
  * 
  *             # Activite function
  *             dataset.apply(self.per_epock, axis = 1)             # <<<<<<<<<<<<<<
  * 
- *             if np.mean(self.error) == 0 and 'erro' in rule:
+ *             if len(self.error) > 0:
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_dataset, __pyx_n_s_apply); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_dataset, __pyx_n_s_apply); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 48, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_per_epock); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_per_epock); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 48, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 48, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_8);
     PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_8);
     __pyx_t_8 = 0;
-    __pyx_t_8 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 48, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_axis, __pyx_int_1) < 0) __PYX_ERR(0, 44, __pyx_L1_error)
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_4, __pyx_t_8); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 44, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_axis, __pyx_int_1) < 0) __PYX_ERR(0, 48, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_4, __pyx_t_8); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 48, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-    /* "Perceptron.pyx":46
+    /* "Perceptron.pyx":50
  *             dataset.apply(self.per_epock, axis = 1)
  * 
- *             if np.mean(self.error) == 0 and 'erro' in rule:             # <<<<<<<<<<<<<<
- *                 break
+ *             if len(self.error) > 0:             # <<<<<<<<<<<<<<
+ *                 if np.mean(self.error) == 0 and 'erro' in rule:
+ *                     break
+ */
+    __pyx_t_5 = __pyx_v_self->error;
+    __Pyx_INCREF(__pyx_t_5);
+    if (unlikely(__pyx_t_5 == Py_None)) {
+      PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
+      __PYX_ERR(0, 50, __pyx_L1_error)
+    }
+    __pyx_t_11 = PyList_GET_SIZE(__pyx_t_5); if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1))) __PYX_ERR(0, 50, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __pyx_t_12 = ((__pyx_t_11 > 0) != 0);
+    if (__pyx_t_12) {
+
+      /* "Perceptron.pyx":51
+ * 
+ *             if len(self.error) > 0:
+ *                 if np.mean(self.error) == 0 and 'erro' in rule:             # <<<<<<<<<<<<<<
+ *                     break
  * 
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 46, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_mean); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 46, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = NULL;
-    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
-      if (likely(__pyx_t_8)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-        __Pyx_INCREF(__pyx_t_8);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_4, function);
+      __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 51, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_mean); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 51, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      __pyx_t_8 = NULL;
+      if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
+        __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
+        if (likely(__pyx_t_8)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+          __Pyx_INCREF(__pyx_t_8);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_4, function);
+        }
       }
-    }
-    __pyx_t_5 = (__pyx_t_8) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_8, __pyx_v_self->error) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_self->error);
-    __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 46, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyInt_EqObjC(__pyx_t_5, __pyx_int_0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 46, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 46, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (__pyx_t_12) {
-    } else {
-      __pyx_t_11 = __pyx_t_12;
-      goto __pyx_L6_bool_binop_done;
-    }
-    __pyx_t_12 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_erro, __pyx_v_rule, Py_EQ)); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 46, __pyx_L1_error)
-    __pyx_t_13 = (__pyx_t_12 != 0);
-    __pyx_t_11 = __pyx_t_13;
-    __pyx_L6_bool_binop_done:;
-    if (__pyx_t_11) {
+      __pyx_t_5 = (__pyx_t_8) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_8, __pyx_v_self->error) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_self->error);
+      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 51, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_t_4 = __Pyx_PyInt_EqObjC(__pyx_t_5, __pyx_int_0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 51, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __pyx_t_13 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_13 < 0)) __PYX_ERR(0, 51, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      if (__pyx_t_13) {
+      } else {
+        __pyx_t_12 = __pyx_t_13;
+        goto __pyx_L7_bool_binop_done;
+      }
+      __pyx_t_13 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_erro, __pyx_v_rule, Py_EQ)); if (unlikely(__pyx_t_13 < 0)) __PYX_ERR(0, 51, __pyx_L1_error)
+      __pyx_t_14 = (__pyx_t_13 != 0);
+      __pyx_t_12 = __pyx_t_14;
+      __pyx_L7_bool_binop_done:;
+      if (__pyx_t_12) {
 
-      /* "Perceptron.pyx":47
- * 
- *             if np.mean(self.error) == 0 and 'erro' in rule:
- *                 break             # <<<<<<<<<<<<<<
+        /* "Perceptron.pyx":52
+ *             if len(self.error) > 0:
+ *                 if np.mean(self.error) == 0 and 'erro' in rule:
+ *                     break             # <<<<<<<<<<<<<<
  * 
  *     cpdef per_epock(self, row):
  */
-      goto __pyx_L4_break;
+        goto __pyx_L4_break;
 
-      /* "Perceptron.pyx":46
+        /* "Perceptron.pyx":51
+ * 
+ *             if len(self.error) > 0:
+ *                 if np.mean(self.error) == 0 and 'erro' in rule:             # <<<<<<<<<<<<<<
+ *                     break
+ * 
+ */
+      }
+
+      /* "Perceptron.pyx":50
  *             dataset.apply(self.per_epock, axis = 1)
  * 
- *             if np.mean(self.error) == 0 and 'erro' in rule:             # <<<<<<<<<<<<<<
- *                 break
- * 
+ *             if len(self.error) > 0:             # <<<<<<<<<<<<<<
+ *                 if np.mean(self.error) == 0 and 'erro' in rule:
+ *                     break
  */
     }
   }
   __pyx_L4_break:;
 
-  /* "Perceptron.pyx":25
- *         self.error = []
+  /* "Perceptron.pyx":28
+ *         self.type_function = ''
  * 
- *     cpdef train(self,train_x, train_d, int epocks, double rate_learning_final, str rule):             # <<<<<<<<<<<<<<
+ *     cpdef train(self,train_x, train_d, int epocks, double rate_learning_final, str rule, str type_function):             # <<<<<<<<<<<<<<
  *         # Initialize weigths
  *         self.weigths = np.random.random((1,train_x.shape[1] + 1))
  */
@@ -2525,16 +2620,19 @@ static PyObject *__pyx_pw_10Perceptron_10Perceptron_3train(PyObject *__pyx_v_sel
   int __pyx_v_epocks;
   double __pyx_v_rate_learning_final;
   PyObject *__pyx_v_rule = 0;
+  PyObject *__pyx_v_type_function = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("train (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_train_x,&__pyx_n_s_train_d,&__pyx_n_s_epocks,&__pyx_n_s_rate_learning_final,&__pyx_n_s_rule,0};
-    PyObject* values[5] = {0,0,0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_train_x,&__pyx_n_s_train_d,&__pyx_n_s_epocks,&__pyx_n_s_rate_learning_final,&__pyx_n_s_rule,&__pyx_n_s_type_function,0};
+    PyObject* values[6] = {0,0,0,0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+        CYTHON_FALLTHROUGH;
         case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
         CYTHON_FALLTHROUGH;
         case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
@@ -2557,31 +2655,37 @@ static PyObject *__pyx_pw_10Perceptron_10Perceptron_3train(PyObject *__pyx_v_sel
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_train_d)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, 1); __PYX_ERR(0, 25, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("train", 1, 6, 6, 1); __PYX_ERR(0, 28, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_epocks)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, 2); __PYX_ERR(0, 25, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("train", 1, 6, 6, 2); __PYX_ERR(0, 28, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_rate_learning_final)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, 3); __PYX_ERR(0, 25, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("train", 1, 6, 6, 3); __PYX_ERR(0, 28, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_rule)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, 4); __PYX_ERR(0, 25, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("train", 1, 6, 6, 4); __PYX_ERR(0, 28, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  5:
+        if (likely((values[5] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_type_function)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("train", 1, 6, 6, 5); __PYX_ERR(0, 28, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "train") < 0)) __PYX_ERR(0, 25, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "train") < 0)) __PYX_ERR(0, 28, __pyx_L3_error)
       }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 6) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
@@ -2589,23 +2693,26 @@ static PyObject *__pyx_pw_10Perceptron_10Perceptron_3train(PyObject *__pyx_v_sel
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+      values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
     }
     __pyx_v_train_x = values[0];
     __pyx_v_train_d = values[1];
-    __pyx_v_epocks = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_epocks == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 25, __pyx_L3_error)
-    __pyx_v_rate_learning_final = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_rate_learning_final == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 25, __pyx_L3_error)
+    __pyx_v_epocks = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_epocks == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L3_error)
+    __pyx_v_rate_learning_final = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_rate_learning_final == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L3_error)
     __pyx_v_rule = ((PyObject*)values[4]);
+    __pyx_v_type_function = ((PyObject*)values[5]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("train", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 25, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("train", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 28, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("Perceptron.Perceptron.train", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_rule), (&PyString_Type), 1, "rule", 1))) __PYX_ERR(0, 25, __pyx_L1_error)
-  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_2train(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self), __pyx_v_train_x, __pyx_v_train_d, __pyx_v_epocks, __pyx_v_rate_learning_final, __pyx_v_rule);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_rule), (&PyString_Type), 1, "rule", 1))) __PYX_ERR(0, 28, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_type_function), (&PyString_Type), 1, "type_function", 1))) __PYX_ERR(0, 28, __pyx_L1_error)
+  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_2train(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self), __pyx_v_train_x, __pyx_v_train_d, __pyx_v_epocks, __pyx_v_rate_learning_final, __pyx_v_rule, __pyx_v_type_function);
 
   /* function exit code */
   goto __pyx_L0;
@@ -2616,13 +2723,13 @@ static PyObject *__pyx_pw_10Perceptron_10Perceptron_3train(PyObject *__pyx_v_sel
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10Perceptron_10Perceptron_2train(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_train_x, PyObject *__pyx_v_train_d, int __pyx_v_epocks, double __pyx_v_rate_learning_final, PyObject *__pyx_v_rule) {
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_2train(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_train_x, PyObject *__pyx_v_train_d, int __pyx_v_epocks, double __pyx_v_rate_learning_final, PyObject *__pyx_v_rule, PyObject *__pyx_v_type_function) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("train", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_train(__pyx_v_self, __pyx_v_train_x, __pyx_v_train_d, __pyx_v_epocks, __pyx_v_rate_learning_final, __pyx_v_rule, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 25, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_train(__pyx_v_self, __pyx_v_train_x, __pyx_v_train_d, __pyx_v_epocks, __pyx_v_rate_learning_final, __pyx_v_rule, __pyx_v_type_function, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2639,8 +2746,8 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_2train(struct __pyx_obj_10Pe
   return __pyx_r;
 }
 
-/* "Perceptron.pyx":49
- *                 break
+/* "Perceptron.pyx":54
+ *                     break
  * 
  *     cpdef per_epock(self, row):             # <<<<<<<<<<<<<<
  *         cdef np.ndarray x = row.values[:-1]
@@ -2674,7 +2781,7 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_per_epock(struct __pyx_obj_10
     else {
       PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_per_epock); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_per_epock); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_10Perceptron_10Perceptron_5per_epock)) {
         __Pyx_XDECREF(__pyx_r);
@@ -2691,7 +2798,7 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_per_epock(struct __pyx_obj_10
         }
         __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_v_row) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_row);
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 49, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 54, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __pyx_r = __pyx_t_2;
@@ -2712,35 +2819,35 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_per_epock(struct __pyx_obj_10
     #endif
   }
 
-  /* "Perceptron.pyx":50
+  /* "Perceptron.pyx":55
  * 
  *     cpdef per_epock(self, row):
  *         cdef np.ndarray x = row.values[:-1]             # <<<<<<<<<<<<<<
  *         x = np.array(x.tolist() + [-1])
  *         cdef int d = row.values[-1]
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_row, __pyx_n_s_values); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 50, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_row, __pyx_n_s_values); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 55, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetSlice(__pyx_t_1, 0, -1L, NULL, NULL, &__pyx_slice_, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 50, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetSlice(__pyx_t_1, 0, -1L, NULL, NULL, &__pyx_slice__2, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 55, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 50, __pyx_L1_error)
+  if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 55, __pyx_L1_error)
   __pyx_v_x = ((PyArrayObject *)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "Perceptron.pyx":51
+  /* "Perceptron.pyx":56
  *     cpdef per_epock(self, row):
  *         cdef np.ndarray x = row.values[:-1]
  *         x = np.array(x.tolist() + [-1])             # <<<<<<<<<<<<<<
  *         cdef int d = row.values[-1]
  *         cdef double y_predicted = self.activate_function(x)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_x), __pyx_n_s_tolist); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_x), __pyx_n_s_tolist); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_5 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
@@ -2754,15 +2861,15 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_per_epock(struct __pyx_obj_10
   }
   __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_INCREF(__pyx_int_neg_1);
   __Pyx_GIVEREF(__pyx_int_neg_1);
   PyList_SET_ITEM(__pyx_t_4, 0, __pyx_int_neg_1);
-  __pyx_t_5 = PyNumber_Add(__pyx_t_1, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_5 = PyNumber_Add(__pyx_t_1, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -2779,80 +2886,83 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_per_epock(struct __pyx_obj_10
   __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_5) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 51, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 51, __pyx_L1_error)
+  if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_DECREF_SET(__pyx_v_x, ((PyArrayObject *)__pyx_t_2));
   __pyx_t_2 = 0;
 
-  /* "Perceptron.pyx":52
+  /* "Perceptron.pyx":57
  *         cdef np.ndarray x = row.values[:-1]
  *         x = np.array(x.tolist() + [-1])
  *         cdef int d = row.values[-1]             # <<<<<<<<<<<<<<
  *         cdef double y_predicted = self.activate_function(x)
  *         cdef double erro = d - y_predicted
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_row, __pyx_n_s_values); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_row, __pyx_n_s_values); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_2, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_2, -1L, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_6 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_d = __pyx_t_6;
 
-  /* "Perceptron.pyx":53
+  /* "Perceptron.pyx":58
  *         x = np.array(x.tolist() + [-1])
  *         cdef int d = row.values[-1]
  *         cdef double y_predicted = self.activate_function(x)             # <<<<<<<<<<<<<<
  *         cdef double erro = d - y_predicted
  *         self.error.append(erro)
  */
-  __pyx_t_3 = ((struct __pyx_vtabstruct_10Perceptron_Perceptron *)__pyx_v_self->__pyx_vtab)->activate_function(__pyx_v_self, ((PyObject *)__pyx_v_x), 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_3 = ((struct __pyx_vtabstruct_10Perceptron_Perceptron *)__pyx_v_self->__pyx_vtab)->activate_function(__pyx_v_self, ((PyObject *)__pyx_v_x), 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_3); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_3); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_y_predicted = __pyx_t_7;
 
-  /* "Perceptron.pyx":54
+  /* "Perceptron.pyx":59
  *         cdef int d = row.values[-1]
  *         cdef double y_predicted = self.activate_function(x)
  *         cdef double erro = d - y_predicted             # <<<<<<<<<<<<<<
  *         self.error.append(erro)
- *         self.adjust_weigth(x, erro)
+ *         self.adjust_weigth(x, erro, y_predicted)
  */
   __pyx_v_erro = (__pyx_v_d - __pyx_v_y_predicted);
 
-  /* "Perceptron.pyx":55
+  /* "Perceptron.pyx":60
  *         cdef double y_predicted = self.activate_function(x)
  *         cdef double erro = d - y_predicted
  *         self.error.append(erro)             # <<<<<<<<<<<<<<
- *         self.adjust_weigth(x, erro)
+ *         self.adjust_weigth(x, erro, y_predicted)
  * 
  */
   if (unlikely(__pyx_v_self->error == Py_None)) {
     PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "append");
-    __PYX_ERR(0, 55, __pyx_L1_error)
+    __PYX_ERR(0, 60, __pyx_L1_error)
   }
-  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_erro); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_erro); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_self->error, __pyx_t_3); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 55, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_self->error, __pyx_t_3); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "Perceptron.pyx":56
+  /* "Perceptron.pyx":61
  *         cdef double erro = d - y_predicted
  *         self.error.append(erro)
- *         self.adjust_weigth(x, erro)             # <<<<<<<<<<<<<<
+ *         self.adjust_weigth(x, erro, y_predicted)             # <<<<<<<<<<<<<<
  * 
  *     cpdef activate_function(self, x):
  */
-  __pyx_t_3 = ((struct __pyx_vtabstruct_10Perceptron_Perceptron *)__pyx_v_self->__pyx_vtab)->adjust_weigth(__pyx_v_self, ((PyObject *)__pyx_v_x), __pyx_v_erro, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 56, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_y_predicted); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 61, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_2 = ((struct __pyx_vtabstruct_10Perceptron_Perceptron *)__pyx_v_self->__pyx_vtab)->adjust_weigth(__pyx_v_self, ((PyObject *)__pyx_v_x), __pyx_v_erro, __pyx_t_3, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "Perceptron.pyx":49
- *                 break
+  /* "Perceptron.pyx":54
+ *                     break
  * 
  *     cpdef per_epock(self, row):             # <<<<<<<<<<<<<<
  *         cdef np.ndarray x = row.values[:-1]
@@ -2896,7 +3006,7 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_4per_epock(struct __pyx_obj_
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("per_epock", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_per_epock(__pyx_v_self, __pyx_v_row, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_per_epock(__pyx_v_self, __pyx_v_row, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2913,12 +3023,12 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_4per_epock(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "Perceptron.pyx":58
- *         self.adjust_weigth(x, erro)
+/* "Perceptron.pyx":63
+ *         self.adjust_weigth(x, erro, y_predicted)
  * 
  *     cpdef activate_function(self, x):             # <<<<<<<<<<<<<<
  *         cdef double u = np.dot(x, self.weigths.T)
- *         return 1 if u > 0 else 0
+ *         if 'b' in self.type_function:
  */
 
 static PyObject *__pyx_pw_10Perceptron_10Perceptron_7activate_function(PyObject *__pyx_v_self, PyObject *__pyx_v_x); /*proto*/
@@ -2933,6 +3043,8 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_activate_function(struct __py
   int __pyx_t_5;
   PyObject *__pyx_t_6 = NULL;
   double __pyx_t_7;
+  int __pyx_t_8;
+  int __pyx_t_9;
   __Pyx_RefNannySetupContext("activate_function", 0);
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
@@ -2944,7 +3056,7 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_activate_function(struct __py
     else {
       PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_activate_function); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_activate_function); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_10Perceptron_10Perceptron_7activate_function)) {
         __Pyx_XDECREF(__pyx_r);
@@ -2961,7 +3073,7 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_activate_function(struct __py
         }
         __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_v_x) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_x);
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 63, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __pyx_r = __pyx_t_2;
@@ -2982,19 +3094,19 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_activate_function(struct __py
     #endif
   }
 
-  /* "Perceptron.pyx":59
+  /* "Perceptron.pyx":64
  * 
  *     cpdef activate_function(self, x):
  *         cdef double u = np.dot(x, self.weigths.T)             # <<<<<<<<<<<<<<
- *         return 1 if u > 0 else 0
- * 
+ *         if 'b' in self.type_function:
+ *             return 1 if u > 0 else 0
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 64, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_dot); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_dot); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 64, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->weigths), __pyx_n_s_T); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->weigths), __pyx_n_s_T); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 64, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -3011,7 +3123,7 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_activate_function(struct __py
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_3)) {
     PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_v_x, __pyx_t_2};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 64, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -3020,14 +3132,14 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_activate_function(struct __py
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
     PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_v_x, __pyx_t_2};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 64, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   } else
   #endif
   {
-    __pyx_t_6 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 64, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     if (__pyx_t_4) {
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
@@ -3038,40 +3150,191 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_activate_function(struct __py
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_6, 1+__pyx_t_5, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 64, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 64, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_u = __pyx_t_7;
 
-  /* "Perceptron.pyx":60
+  /* "Perceptron.pyx":65
  *     cpdef activate_function(self, x):
  *         cdef double u = np.dot(x, self.weigths.T)
- *         return 1 if u > 0 else 0             # <<<<<<<<<<<<<<
- * 
- *     cpdef adjust_weigth(self, x,double error):
+ *         if 'b' in self.type_function:             # <<<<<<<<<<<<<<
+ *             return 1 if u > 0 else 0
+ *         elif 'l' in self.type_function:
  */
-  __Pyx_XDECREF(__pyx_r);
-  if (((__pyx_v_u > 0.0) != 0)) {
-    __Pyx_INCREF(__pyx_int_1);
-    __pyx_t_1 = __pyx_int_1;
-  } else {
-    __Pyx_INCREF(__pyx_int_0);
-    __pyx_t_1 = __pyx_int_0;
-  }
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
-  goto __pyx_L0;
+  __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_b, __pyx_v_self->type_function, Py_EQ)); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_t_9 = (__pyx_t_8 != 0);
+  if (__pyx_t_9) {
 
-  /* "Perceptron.pyx":58
- *         self.adjust_weigth(x, erro)
+    /* "Perceptron.pyx":66
+ *         cdef double u = np.dot(x, self.weigths.T)
+ *         if 'b' in self.type_function:
+ *             return 1 if u > 0 else 0             # <<<<<<<<<<<<<<
+ *         elif 'l' in self.type_function:
+ *             return 1/(1 + math.exp(-u))
+ */
+    __Pyx_XDECREF(__pyx_r);
+    if (((__pyx_v_u > 0.0) != 0)) {
+      __Pyx_INCREF(__pyx_int_1);
+      __pyx_t_1 = __pyx_int_1;
+    } else {
+      __Pyx_INCREF(__pyx_int_0);
+      __pyx_t_1 = __pyx_int_0;
+    }
+    __pyx_r = __pyx_t_1;
+    __pyx_t_1 = 0;
+    goto __pyx_L0;
+
+    /* "Perceptron.pyx":65
+ *     cpdef activate_function(self, x):
+ *         cdef double u = np.dot(x, self.weigths.T)
+ *         if 'b' in self.type_function:             # <<<<<<<<<<<<<<
+ *             return 1 if u > 0 else 0
+ *         elif 'l' in self.type_function:
+ */
+  }
+
+  /* "Perceptron.pyx":67
+ *         if 'b' in self.type_function:
+ *             return 1 if u > 0 else 0
+ *         elif 'l' in self.type_function:             # <<<<<<<<<<<<<<
+ *             return 1/(1 + math.exp(-u))
+ *         else:
+ */
+  __pyx_t_9 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_l, __pyx_v_self->type_function, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __pyx_t_8 = (__pyx_t_9 != 0);
+  if (__pyx_t_8) {
+
+    /* "Perceptron.pyx":68
+ *             return 1 if u > 0 else 0
+ *         elif 'l' in self.type_function:
+ *             return 1/(1 + math.exp(-u))             # <<<<<<<<<<<<<<
+ *         else:
+ *             return (1-math.exp(-u))/(1+math.exp(-u))
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_math); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_exp); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = PyFloat_FromDouble((-__pyx_v_u)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_2 = NULL;
+    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
+      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_6);
+      if (likely(__pyx_t_2)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+        __Pyx_INCREF(__pyx_t_2);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_6, function);
+      }
+    }
+    __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_3);
+    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_t_6 = __Pyx_PyInt_AddCObj(__pyx_int_1, __pyx_t_1, 1, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_1 = __Pyx_PyNumber_Divide(__pyx_int_1, __pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_r = __pyx_t_1;
+    __pyx_t_1 = 0;
+    goto __pyx_L0;
+
+    /* "Perceptron.pyx":67
+ *         if 'b' in self.type_function:
+ *             return 1 if u > 0 else 0
+ *         elif 'l' in self.type_function:             # <<<<<<<<<<<<<<
+ *             return 1/(1 + math.exp(-u))
+ *         else:
+ */
+  }
+
+  /* "Perceptron.pyx":70
+ *             return 1/(1 + math.exp(-u))
+ *         else:
+ *             return (1-math.exp(-u))/(1+math.exp(-u))             # <<<<<<<<<<<<<<
+ * 
+ *     cpdef diff_function(self, y ):
+ */
+  /*else*/ {
+    __Pyx_XDECREF(__pyx_r);
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_math); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_exp); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_t_6 = PyFloat_FromDouble((-__pyx_v_u)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_t_2 = NULL;
+    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_2)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_2);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+      }
+    }
+    __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_t_6) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_6);
+    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_math); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_exp); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_t_6 = PyFloat_FromDouble((-__pyx_v_u)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_t_4 = NULL;
+    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_2);
+      if (likely(__pyx_t_4)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+        __Pyx_INCREF(__pyx_t_4);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_2, function);
+      }
+    }
+    __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_4, __pyx_t_6) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_6);
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_2 = __Pyx_PyInt_AddCObj(__pyx_int_1, __pyx_t_1, 1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_1 = __Pyx_PyNumber_Divide(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_r = __pyx_t_1;
+    __pyx_t_1 = 0;
+    goto __pyx_L0;
+  }
+
+  /* "Perceptron.pyx":63
+ *         self.adjust_weigth(x, erro, y_predicted)
  * 
  *     cpdef activate_function(self, x):             # <<<<<<<<<<<<<<
  *         cdef double u = np.dot(x, self.weigths.T)
- *         return 1 if u > 0 else 0
+ *         if 'b' in self.type_function:
  */
 
   /* function exit code */
@@ -3108,7 +3371,7 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_6activate_function(struct __
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("activate_function", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_activate_function(__pyx_v_self, __pyx_v_x, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_activate_function(__pyx_v_self, __pyx_v_x, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3125,16 +3388,232 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_6activate_function(struct __
   return __pyx_r;
 }
 
-/* "Perceptron.pyx":62
- *         return 1 if u > 0 else 0
+/* "Perceptron.pyx":72
+ *             return (1-math.exp(-u))/(1+math.exp(-u))
  * 
- *     cpdef adjust_weigth(self, x,double error):             # <<<<<<<<<<<<<<
- *         self.weigths += self.rate_learning * x * error
+ *     cpdef diff_function(self, y ):             # <<<<<<<<<<<<<<
+ *         if 'b' in self.type_function:
+ *             return 1
+ */
+
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_9diff_function(PyObject *__pyx_v_self, PyObject *__pyx_v_y); /*proto*/
+static PyObject *__pyx_f_10Perceptron_10Perceptron_diff_function(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_y, int __pyx_skip_dispatch) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  int __pyx_t_5;
+  int __pyx_t_6;
+  __Pyx_RefNannySetupContext("diff_function", 0);
+  /* Check if called by wrapper */
+  if (unlikely(__pyx_skip_dispatch)) ;
+  /* Check if overridden in Python */
+  else if (unlikely((Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0) || (Py_TYPE(((PyObject *)__pyx_v_self))->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)))) {
+    #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+    static PY_UINT64_T tp_dict_version = 0, obj_dict_version = 0;
+    if (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict && tp_dict_version == __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) && (!Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset || obj_dict_version == __PYX_GET_DICT_VERSION(_PyObject_GetDictPtr(((PyObject *)__pyx_v_self))))));
+    else {
+      PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
+      #endif
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_diff_function); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_10Perceptron_10Perceptron_9diff_function)) {
+        __Pyx_XDECREF(__pyx_r);
+        __Pyx_INCREF(__pyx_t_1);
+        __pyx_t_3 = __pyx_t_1; __pyx_t_4 = NULL;
+        if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+          __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+          if (likely(__pyx_t_4)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+            __Pyx_INCREF(__pyx_t_4);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_3, function);
+          }
+        }
+        __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_v_y) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_y);
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 72, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __pyx_r = __pyx_t_2;
+        __pyx_t_2 = 0;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        goto __pyx_L0;
+      }
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+      tp_dict_version = likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
+      obj_dict_version = likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset) ? __PYX_GET_DICT_VERSION(_PyObject_GetDictPtr(((PyObject *)__pyx_v_self))) : 0;
+      if (unlikely(type_dict_guard != tp_dict_version)) {
+        tp_dict_version = obj_dict_version = 0;
+      }
+      #endif
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+    }
+    #endif
+  }
+
+  /* "Perceptron.pyx":73
+ * 
+ *     cpdef diff_function(self, y ):
+ *         if 'b' in self.type_function:             # <<<<<<<<<<<<<<
+ *             return 1
+ *         elif 'l' in self.type_function:
+ */
+  __pyx_t_5 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_b, __pyx_v_self->type_function, Py_EQ)); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 73, __pyx_L1_error)
+  __pyx_t_6 = (__pyx_t_5 != 0);
+  if (__pyx_t_6) {
+
+    /* "Perceptron.pyx":74
+ *     cpdef diff_function(self, y ):
+ *         if 'b' in self.type_function:
+ *             return 1             # <<<<<<<<<<<<<<
+ *         elif 'l' in self.type_function:
+ *             return y*(1-y)
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __Pyx_INCREF(__pyx_int_1);
+    __pyx_r = __pyx_int_1;
+    goto __pyx_L0;
+
+    /* "Perceptron.pyx":73
+ * 
+ *     cpdef diff_function(self, y ):
+ *         if 'b' in self.type_function:             # <<<<<<<<<<<<<<
+ *             return 1
+ *         elif 'l' in self.type_function:
+ */
+  }
+
+  /* "Perceptron.pyx":75
+ *         if 'b' in self.type_function:
+ *             return 1
+ *         elif 'l' in self.type_function:             # <<<<<<<<<<<<<<
+ *             return y*(1-y)
+ *         else:
+ */
+  __pyx_t_6 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_l, __pyx_v_self->type_function, Py_EQ)); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 75, __pyx_L1_error)
+  __pyx_t_5 = (__pyx_t_6 != 0);
+  if (__pyx_t_5) {
+
+    /* "Perceptron.pyx":76
+ *             return 1
+ *         elif 'l' in self.type_function:
+ *             return y*(1-y)             # <<<<<<<<<<<<<<
+ *         else:
+ *             return 0.5*(1-(y**2))
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_1 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_v_y, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = PyNumber_Multiply(__pyx_v_y, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_r = __pyx_t_2;
+    __pyx_t_2 = 0;
+    goto __pyx_L0;
+
+    /* "Perceptron.pyx":75
+ *         if 'b' in self.type_function:
+ *             return 1
+ *         elif 'l' in self.type_function:             # <<<<<<<<<<<<<<
+ *             return y*(1-y)
+ *         else:
+ */
+  }
+
+  /* "Perceptron.pyx":78
+ *             return y*(1-y)
+ *         else:
+ *             return 0.5*(1-(y**2))             # <<<<<<<<<<<<<<
+ * 
+ *     cpdef adjust_weigth(self, x,double error, y):
+ */
+  /*else*/ {
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_2 = PyNumber_Power(__pyx_v_y, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_1 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_2, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_2 = PyNumber_Multiply(__pyx_float_0_5, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_r = __pyx_t_2;
+    __pyx_t_2 = 0;
+    goto __pyx_L0;
+  }
+
+  /* "Perceptron.pyx":72
+ *             return (1-math.exp(-u))/(1+math.exp(-u))
+ * 
+ *     cpdef diff_function(self, y ):             # <<<<<<<<<<<<<<
+ *         if 'b' in self.type_function:
+ *             return 1
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_AddTraceback("Perceptron.Perceptron.diff_function", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_9diff_function(PyObject *__pyx_v_self, PyObject *__pyx_v_y); /*proto*/
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_9diff_function(PyObject *__pyx_v_self, PyObject *__pyx_v_y) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("diff_function (wrapper)", 0);
+  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_8diff_function(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self), ((PyObject *)__pyx_v_y));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_8diff_function(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_y) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("diff_function", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_diff_function(__pyx_v_self, __pyx_v_y, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("Perceptron.Perceptron.diff_function", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "Perceptron.pyx":80
+ *             return 0.5*(1-(y**2))
+ * 
+ *     cpdef adjust_weigth(self, x,double error, y):             # <<<<<<<<<<<<<<
+ *         self.weigths += self.rate_learning * x * self.diff_function(y) * error
  * 
  */
 
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_9adjust_weigth(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_10Perceptron_10Perceptron_adjust_weigth(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x, double __pyx_v_error, int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_11adjust_weigth(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_10Perceptron_10Perceptron_adjust_weigth(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x, double __pyx_v_error, PyObject *__pyx_v_y, int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3155,11 +3634,11 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_adjust_weigth(struct __pyx_ob
     else {
       PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_adjust_weigth); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_adjust_weigth); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_10Perceptron_10Perceptron_9adjust_weigth)) {
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_10Perceptron_10Perceptron_11adjust_weigth)) {
         __Pyx_XDECREF(__pyx_r);
-        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_error); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 62, __pyx_L1_error)
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_error); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
@@ -3176,8 +3655,8 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_adjust_weigth(struct __pyx_ob
         }
         #if CYTHON_FAST_PYCALL
         if (PyFunction_Check(__pyx_t_4)) {
-          PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_v_x, __pyx_t_3};
-          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
+          PyObject *__pyx_temp[4] = {__pyx_t_5, __pyx_v_x, __pyx_t_3, __pyx_v_y};
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_6, 3+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3185,15 +3664,15 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_adjust_weigth(struct __pyx_ob
         #endif
         #if CYTHON_FAST_PYCCALL
         if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
-          PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_v_x, __pyx_t_3};
-          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
+          PyObject *__pyx_temp[4] = {__pyx_t_5, __pyx_v_x, __pyx_t_3, __pyx_v_y};
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_6, 3+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         } else
         #endif
         {
-          __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 62, __pyx_L1_error)
+          __pyx_t_7 = PyTuple_New(3+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 80, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_7);
           if (__pyx_t_5) {
             __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5); __pyx_t_5 = NULL;
@@ -3203,8 +3682,11 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_adjust_weigth(struct __pyx_ob
           PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_6, __pyx_v_x);
           __Pyx_GIVEREF(__pyx_t_3);
           PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_6, __pyx_t_3);
+          __Pyx_INCREF(__pyx_v_y);
+          __Pyx_GIVEREF(__pyx_v_y);
+          PyTuple_SET_ITEM(__pyx_t_7, 2+__pyx_t_6, __pyx_v_y);
           __pyx_t_3 = 0;
-          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         }
@@ -3227,39 +3709,45 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_adjust_weigth(struct __pyx_ob
     #endif
   }
 
-  /* "Perceptron.pyx":63
+  /* "Perceptron.pyx":81
  * 
- *     cpdef adjust_weigth(self, x,double error):
- *         self.weigths += self.rate_learning * x * error             # <<<<<<<<<<<<<<
+ *     cpdef adjust_weigth(self, x,double error, y):
+ *         self.weigths += self.rate_learning * x * self.diff_function(y) * error             # <<<<<<<<<<<<<<
  * 
  *     cpdef predict(self, x):
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->rate_learning); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->rate_learning); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyNumber_Multiply(__pyx_t_1, __pyx_v_x); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 63, __pyx_L1_error)
+  __pyx_t_2 = PyNumber_Multiply(__pyx_t_1, __pyx_v_x); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_error); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_10Perceptron_Perceptron *)__pyx_v_self->__pyx_vtab)->diff_function(__pyx_v_self, __pyx_v_y, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = PyNumber_Multiply(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 63, __pyx_L1_error)
+  __pyx_t_4 = PyNumber_Multiply(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyNumber_InPlaceAdd(((PyObject *)__pyx_v_self->weigths), __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_error); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = PyNumber_Multiply(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 63, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = PyNumber_InPlaceAdd(((PyObject *)__pyx_v_self->weigths), __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->weigths);
   __Pyx_DECREF(((PyObject *)__pyx_v_self->weigths));
   __pyx_v_self->weigths = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "Perceptron.pyx":62
- *         return 1 if u > 0 else 0
+  /* "Perceptron.pyx":80
+ *             return 0.5*(1-(y**2))
  * 
- *     cpdef adjust_weigth(self, x,double error):             # <<<<<<<<<<<<<<
- *         self.weigths += self.rate_learning * x * error
+ *     cpdef adjust_weigth(self, x,double error, y):             # <<<<<<<<<<<<<<
+ *         self.weigths += self.rate_learning * x * self.diff_function(y) * error
  * 
  */
 
@@ -3282,20 +3770,23 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_adjust_weigth(struct __pyx_ob
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_9adjust_weigth(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_9adjust_weigth(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_11adjust_weigth(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_11adjust_weigth(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_x = 0;
   double __pyx_v_error;
+  PyObject *__pyx_v_y = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("adjust_weigth (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_x,&__pyx_n_s_error,0};
-    PyObject* values[2] = {0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_x,&__pyx_n_s_error,&__pyx_n_s_y,0};
+    PyObject* values[3] = {0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
         case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
         CYTHON_FALLTHROUGH;
         case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
@@ -3312,43 +3803,51 @@ static PyObject *__pyx_pw_10Perceptron_10Perceptron_9adjust_weigth(PyObject *__p
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_error)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("adjust_weigth", 1, 2, 2, 1); __PYX_ERR(0, 62, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("adjust_weigth", 1, 3, 3, 1); __PYX_ERR(0, 80, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_y)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("adjust_weigth", 1, 3, 3, 2); __PYX_ERR(0, 80, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "adjust_weigth") < 0)) __PYX_ERR(0, 62, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "adjust_weigth") < 0)) __PYX_ERR(0, 80, __pyx_L3_error)
       }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
     __pyx_v_x = values[0];
-    __pyx_v_error = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_error == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L3_error)
+    __pyx_v_error = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_error == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
+    __pyx_v_y = values[2];
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("adjust_weigth", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 62, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("adjust_weigth", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 80, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("Perceptron.Perceptron.adjust_weigth", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_8adjust_weigth(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self), __pyx_v_x, __pyx_v_error);
+  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_10adjust_weigth(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self), __pyx_v_x, __pyx_v_error, __pyx_v_y);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10Perceptron_10Perceptron_8adjust_weigth(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x, double __pyx_v_error) {
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_10adjust_weigth(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x, double __pyx_v_error, PyObject *__pyx_v_y) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("adjust_weigth", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_adjust_weigth(__pyx_v_self, __pyx_v_x, __pyx_v_error, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_adjust_weigth(__pyx_v_self, __pyx_v_x, __pyx_v_error, __pyx_v_y, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3365,15 +3864,15 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_8adjust_weigth(struct __pyx_
   return __pyx_r;
 }
 
-/* "Perceptron.pyx":65
- *         self.weigths += self.rate_learning * x * error
+/* "Perceptron.pyx":83
+ *         self.weigths += self.rate_learning * x * self.diff_function(y) * error
  * 
  *     cpdef predict(self, x):             # <<<<<<<<<<<<<<
  *         x = np.array(x.tolist() + [-1])
- *         return self.activate_function(x)
+ *         if 'b' in self.type_function:
  */
 
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_11predict(PyObject *__pyx_v_self, PyObject *__pyx_v_x); /*proto*/
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_13predict(PyObject *__pyx_v_self, PyObject *__pyx_v_x); /*proto*/
 static PyObject *__pyx_f_10Perceptron_10Perceptron_predict(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x, int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -3382,6 +3881,8 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_predict(struct __pyx_obj_10Pe
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
+  int __pyx_t_6;
+  int __pyx_t_7;
   __Pyx_RefNannySetupContext("predict", 0);
   __Pyx_INCREF(__pyx_v_x);
   /* Check if called by wrapper */
@@ -3394,9 +3895,9 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_predict(struct __pyx_obj_10Pe
     else {
       PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_predict); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_predict); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_10Perceptron_10Perceptron_11predict)) {
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_10Perceptron_10Perceptron_13predict)) {
         __Pyx_XDECREF(__pyx_r);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_3 = __pyx_t_1; __pyx_t_4 = NULL;
@@ -3411,7 +3912,7 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_predict(struct __pyx_obj_10Pe
         }
         __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_v_x) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_x);
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 65, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __pyx_r = __pyx_t_2;
@@ -3432,19 +3933,19 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_predict(struct __pyx_obj_10Pe
     #endif
   }
 
-  /* "Perceptron.pyx":66
+  /* "Perceptron.pyx":84
  * 
  *     cpdef predict(self, x):
  *         x = np.array(x.tolist() + [-1])             # <<<<<<<<<<<<<<
- *         return self.activate_function(x)
- * 
+ *         if 'b' in self.type_function:
+ *             return self.activate_function(x)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_x, __pyx_n_s_tolist); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_x, __pyx_n_s_tolist); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_5 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
@@ -3458,15 +3959,15 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_predict(struct __pyx_obj_10Pe
   }
   __pyx_t_2 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 66, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_INCREF(__pyx_int_neg_1);
   __Pyx_GIVEREF(__pyx_int_neg_1);
   PyList_SET_ITEM(__pyx_t_4, 0, __pyx_int_neg_1);
-  __pyx_t_5 = PyNumber_Add(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_t_5 = PyNumber_Add(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -3483,32 +3984,124 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_predict(struct __pyx_obj_10Pe
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_5) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF_SET(__pyx_v_x, __pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "Perceptron.pyx":67
+  /* "Perceptron.pyx":85
  *     cpdef predict(self, x):
  *         x = np.array(x.tolist() + [-1])
- *         return self.activate_function(x)             # <<<<<<<<<<<<<<
+ *         if 'b' in self.type_function:             # <<<<<<<<<<<<<<
+ *             return self.activate_function(x)
+ *         elif 'l' in self.type_function:
+ */
+  __pyx_t_6 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_b, __pyx_v_self->type_function, Py_EQ)); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 85, __pyx_L1_error)
+  __pyx_t_7 = (__pyx_t_6 != 0);
+  if (__pyx_t_7) {
+
+    /* "Perceptron.pyx":86
+ *         x = np.array(x.tolist() + [-1])
+ *         if 'b' in self.type_function:
+ *             return self.activate_function(x)             # <<<<<<<<<<<<<<
+ *         elif 'l' in self.type_function:
+ *             return 1 if self.activate_function(x) >= 0.5 else 0
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_1 = ((struct __pyx_vtabstruct_10Perceptron_Perceptron *)__pyx_v_self->__pyx_vtab)->activate_function(__pyx_v_self, __pyx_v_x, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_r = __pyx_t_1;
+    __pyx_t_1 = 0;
+    goto __pyx_L0;
+
+    /* "Perceptron.pyx":85
+ *     cpdef predict(self, x):
+ *         x = np.array(x.tolist() + [-1])
+ *         if 'b' in self.type_function:             # <<<<<<<<<<<<<<
+ *             return self.activate_function(x)
+ *         elif 'l' in self.type_function:
+ */
+  }
+
+  /* "Perceptron.pyx":87
+ *         if 'b' in self.type_function:
+ *             return self.activate_function(x)
+ *         elif 'l' in self.type_function:             # <<<<<<<<<<<<<<
+ *             return 1 if self.activate_function(x) >= 0.5 else 0
+ *         else:
+ */
+  __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_l, __pyx_v_self->type_function, Py_EQ)); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 87, __pyx_L1_error)
+  __pyx_t_6 = (__pyx_t_7 != 0);
+  if (__pyx_t_6) {
+
+    /* "Perceptron.pyx":88
+ *             return self.activate_function(x)
+ *         elif 'l' in self.type_function:
+ *             return 1 if self.activate_function(x) >= 0.5 else 0             # <<<<<<<<<<<<<<
+ *         else:
+ *             return 1 if self.activate_function(x) >= 0 else 0
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_3 = ((struct __pyx_vtabstruct_10Perceptron_Perceptron *)__pyx_v_self->__pyx_vtab)->activate_function(__pyx_v_self, __pyx_v_x, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = PyObject_RichCompare(__pyx_t_3, __pyx_float_0_5, Py_GE); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 88, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 88, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    if (__pyx_t_6) {
+      __Pyx_INCREF(__pyx_int_1);
+      __pyx_t_1 = __pyx_int_1;
+    } else {
+      __Pyx_INCREF(__pyx_int_0);
+      __pyx_t_1 = __pyx_int_0;
+    }
+    __pyx_r = __pyx_t_1;
+    __pyx_t_1 = 0;
+    goto __pyx_L0;
+
+    /* "Perceptron.pyx":87
+ *         if 'b' in self.type_function:
+ *             return self.activate_function(x)
+ *         elif 'l' in self.type_function:             # <<<<<<<<<<<<<<
+ *             return 1 if self.activate_function(x) >= 0.5 else 0
+ *         else:
+ */
+  }
+
+  /* "Perceptron.pyx":90
+ *             return 1 if self.activate_function(x) >= 0.5 else 0
+ *         else:
+ *             return 1 if self.activate_function(x) >= 0 else 0             # <<<<<<<<<<<<<<
  * 
  *     cpdef get_weights(self):
  */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((struct __pyx_vtabstruct_10Perceptron_Perceptron *)__pyx_v_self->__pyx_vtab)->activate_function(__pyx_v_self, __pyx_v_x, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
-  goto __pyx_L0;
+  /*else*/ {
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_5 = ((struct __pyx_vtabstruct_10Perceptron_Perceptron *)__pyx_v_self->__pyx_vtab)->activate_function(__pyx_v_self, __pyx_v_x, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 90, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_3 = PyObject_RichCompare(__pyx_t_5, __pyx_int_0, Py_GE); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 90, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (__pyx_t_6) {
+      __Pyx_INCREF(__pyx_int_1);
+      __pyx_t_1 = __pyx_int_1;
+    } else {
+      __Pyx_INCREF(__pyx_int_0);
+      __pyx_t_1 = __pyx_int_0;
+    }
+    __pyx_r = __pyx_t_1;
+    __pyx_t_1 = 0;
+    goto __pyx_L0;
+  }
 
-  /* "Perceptron.pyx":65
- *         self.weigths += self.rate_learning * x * error
+  /* "Perceptron.pyx":83
+ *         self.weigths += self.rate_learning * x * self.diff_function(y) * error
  * 
  *     cpdef predict(self, x):             # <<<<<<<<<<<<<<
  *         x = np.array(x.tolist() + [-1])
- *         return self.activate_function(x)
+ *         if 'b' in self.type_function:
  */
 
   /* function exit code */
@@ -3528,25 +4121,25 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_predict(struct __pyx_obj_10Pe
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_11predict(PyObject *__pyx_v_self, PyObject *__pyx_v_x); /*proto*/
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_11predict(PyObject *__pyx_v_self, PyObject *__pyx_v_x) {
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_13predict(PyObject *__pyx_v_self, PyObject *__pyx_v_x); /*proto*/
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_13predict(PyObject *__pyx_v_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("predict (wrapper)", 0);
-  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_10predict(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self), ((PyObject *)__pyx_v_x));
+  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_12predict(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self), ((PyObject *)__pyx_v_x));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10Perceptron_10Perceptron_10predict(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x) {
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_12predict(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("predict", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_predict(__pyx_v_self, __pyx_v_x, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_predict(__pyx_v_self, __pyx_v_x, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3563,14 +4156,14 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_10predict(struct __pyx_obj_1
   return __pyx_r;
 }
 
-/* "Perceptron.pyx":69
- *         return self.activate_function(x)
+/* "Perceptron.pyx":92
+ *             return 1 if self.activate_function(x) >= 0 else 0
  * 
  *     cpdef get_weights(self):             # <<<<<<<<<<<<<<
  *         return self.weigths
  */
 
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_13get_weights(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_15get_weights(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static PyObject *__pyx_f_10Perceptron_10Perceptron_get_weights(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -3589,9 +4182,9 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_get_weights(struct __pyx_obj_
     else {
       PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_weights); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_weights); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_10Perceptron_10Perceptron_13get_weights)) {
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_10Perceptron_10Perceptron_15get_weights)) {
         __Pyx_XDECREF(__pyx_r);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_3 = __pyx_t_1; __pyx_t_4 = NULL;
@@ -3606,7 +4199,7 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_get_weights(struct __pyx_obj_
         }
         __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 69, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __pyx_r = __pyx_t_2;
@@ -3627,7 +4220,7 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_get_weights(struct __pyx_obj_
     #endif
   }
 
-  /* "Perceptron.pyx":70
+  /* "Perceptron.pyx":93
  * 
  *     cpdef get_weights(self):
  *         return self.weigths             # <<<<<<<<<<<<<<
@@ -3637,8 +4230,8 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_get_weights(struct __pyx_obj_
   __pyx_r = ((PyObject *)__pyx_v_self->weigths);
   goto __pyx_L0;
 
-  /* "Perceptron.pyx":69
- *         return self.activate_function(x)
+  /* "Perceptron.pyx":92
+ *             return 1 if self.activate_function(x) >= 0 else 0
  * 
  *     cpdef get_weights(self):             # <<<<<<<<<<<<<<
  *         return self.weigths
@@ -3659,25 +4252,25 @@ static PyObject *__pyx_f_10Perceptron_10Perceptron_get_weights(struct __pyx_obj_
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_13get_weights(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_13get_weights(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_15get_weights(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_15get_weights(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_weights (wrapper)", 0);
-  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_12get_weights(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self));
+  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_14get_weights(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10Perceptron_10Perceptron_12get_weights(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self) {
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_14get_weights(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_weights", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_get_weights(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_10Perceptron_10Perceptron_get_weights(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3701,19 +4294,19 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_12get_weights(struct __pyx_o
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_15__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_15__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_17__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_17__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__reduce_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self));
+  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_16__reduce_cython__(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self) {
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_16__reduce_cython__(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self) {
   PyObject *__pyx_v_state = 0;
   PyObject *__pyx_v__dict = 0;
   int __pyx_v_use_setstate;
@@ -3730,13 +4323,13 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct _
   /* "(tree fragment)":5
  *     cdef object _dict
  *     cdef bint use_setstate
- *     state = (self.error, self.rate_learning, self.train_d, self.train_x, self.weigths)             # <<<<<<<<<<<<<<
+ *     state = (self.error, self.rate_learning, self.train_d, self.train_x, self.type_function, self.weigths)             # <<<<<<<<<<<<<<
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:
  */
   __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->rate_learning); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(5); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 5, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(6); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(__pyx_v_self->error);
   __Pyx_GIVEREF(__pyx_v_self->error);
@@ -3749,16 +4342,19 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct _
   __Pyx_INCREF(__pyx_v_self->train_x);
   __Pyx_GIVEREF(__pyx_v_self->train_x);
   PyTuple_SET_ITEM(__pyx_t_2, 3, __pyx_v_self->train_x);
+  __Pyx_INCREF(__pyx_v_self->type_function);
+  __Pyx_GIVEREF(__pyx_v_self->type_function);
+  PyTuple_SET_ITEM(__pyx_t_2, 4, __pyx_v_self->type_function);
   __Pyx_INCREF(((PyObject *)__pyx_v_self->weigths));
   __Pyx_GIVEREF(((PyObject *)__pyx_v_self->weigths));
-  PyTuple_SET_ITEM(__pyx_t_2, 4, ((PyObject *)__pyx_v_self->weigths));
+  PyTuple_SET_ITEM(__pyx_t_2, 5, ((PyObject *)__pyx_v_self->weigths));
   __pyx_t_1 = 0;
   __pyx_v_state = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
   /* "(tree fragment)":6
  *     cdef bint use_setstate
- *     state = (self.error, self.rate_learning, self.train_d, self.train_x, self.weigths)
+ *     state = (self.error, self.rate_learning, self.train_d, self.train_x, self.type_function, self.weigths)
  *     _dict = getattr(self, '__dict__', None)             # <<<<<<<<<<<<<<
  *     if _dict is not None:
  *         state += (_dict,)
@@ -3769,7 +4365,7 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct _
   __pyx_t_2 = 0;
 
   /* "(tree fragment)":7
- *     state = (self.error, self.rate_learning, self.train_d, self.train_x, self.weigths)
+ *     state = (self.error, self.rate_learning, self.train_d, self.train_x, self.type_function, self.weigths)
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:             # <<<<<<<<<<<<<<
  *         state += (_dict,)
@@ -3802,12 +4398,12 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct _
  *         state += (_dict,)
  *         use_setstate = True             # <<<<<<<<<<<<<<
  *     else:
- *         use_setstate = self.error is not None or self.train_d is not None or self.train_x is not None or self.weigths is not None
+ *         use_setstate = self.error is not None or self.train_d is not None or self.train_x is not None or self.type_function is not None or self.weigths is not None
  */
     __pyx_v_use_setstate = 1;
 
     /* "(tree fragment)":7
- *     state = (self.error, self.rate_learning, self.train_d, self.train_x, self.weigths)
+ *     state = (self.error, self.rate_learning, self.train_d, self.train_x, self.type_function, self.weigths)
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:             # <<<<<<<<<<<<<<
  *         state += (_dict,)
@@ -3819,9 +4415,9 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct _
   /* "(tree fragment)":11
  *         use_setstate = True
  *     else:
- *         use_setstate = self.error is not None or self.train_d is not None or self.train_x is not None or self.weigths is not None             # <<<<<<<<<<<<<<
+ *         use_setstate = self.error is not None or self.train_d is not None or self.train_x is not None or self.type_function is not None or self.weigths is not None             # <<<<<<<<<<<<<<
  *     if use_setstate:
- *         return __pyx_unpickle_Perceptron, (type(self), 0xdf084dc, None), state
+ *         return __pyx_unpickle_Perceptron, (type(self), 0x74b76dc, None), state
  */
   /*else*/ {
     __pyx_t_3 = (__pyx_v_self->error != ((PyObject*)Py_None));
@@ -3845,9 +4441,16 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct _
       __pyx_t_4 = __pyx_t_5;
       goto __pyx_L4_bool_binop_done;
     }
-    __pyx_t_5 = (((PyObject *)__pyx_v_self->weigths) != Py_None);
+    __pyx_t_5 = (__pyx_v_self->type_function != ((PyObject*)Py_None));
     __pyx_t_3 = (__pyx_t_5 != 0);
-    __pyx_t_4 = __pyx_t_3;
+    if (!__pyx_t_3) {
+    } else {
+      __pyx_t_4 = __pyx_t_3;
+      goto __pyx_L4_bool_binop_done;
+    }
+    __pyx_t_3 = (((PyObject *)__pyx_v_self->weigths) != Py_None);
+    __pyx_t_5 = (__pyx_t_3 != 0);
+    __pyx_t_4 = __pyx_t_5;
     __pyx_L4_bool_binop_done:;
     __pyx_v_use_setstate = __pyx_t_4;
   }
@@ -3855,20 +4458,20 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct _
 
   /* "(tree fragment)":12
  *     else:
- *         use_setstate = self.error is not None or self.train_d is not None or self.train_x is not None or self.weigths is not None
+ *         use_setstate = self.error is not None or self.train_d is not None or self.train_x is not None or self.type_function is not None or self.weigths is not None
  *     if use_setstate:             # <<<<<<<<<<<<<<
- *         return __pyx_unpickle_Perceptron, (type(self), 0xdf084dc, None), state
+ *         return __pyx_unpickle_Perceptron, (type(self), 0x74b76dc, None), state
  *     else:
  */
   __pyx_t_4 = (__pyx_v_use_setstate != 0);
   if (__pyx_t_4) {
 
     /* "(tree fragment)":13
- *         use_setstate = self.error is not None or self.train_d is not None or self.train_x is not None or self.weigths is not None
+ *         use_setstate = self.error is not None or self.train_d is not None or self.train_x is not None or self.type_function is not None or self.weigths is not None
  *     if use_setstate:
- *         return __pyx_unpickle_Perceptron, (type(self), 0xdf084dc, None), state             # <<<<<<<<<<<<<<
+ *         return __pyx_unpickle_Perceptron, (type(self), 0x74b76dc, None), state             # <<<<<<<<<<<<<<
  *     else:
- *         return __pyx_unpickle_Perceptron, (type(self), 0xdf084dc, state)
+ *         return __pyx_unpickle_Perceptron, (type(self), 0x74b76dc, state)
  */
     __Pyx_XDECREF(__pyx_r);
     __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_pyx_unpickle_Perceptron); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 13, __pyx_L1_error)
@@ -3878,9 +4481,9 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct _
     __Pyx_INCREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     __Pyx_GIVEREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     PyTuple_SET_ITEM(__pyx_t_2, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    __Pyx_INCREF(__pyx_int_233866460);
-    __Pyx_GIVEREF(__pyx_int_233866460);
-    PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_int_233866460);
+    __Pyx_INCREF(__pyx_int_122386140);
+    __Pyx_GIVEREF(__pyx_int_122386140);
+    PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_int_122386140);
     __Pyx_INCREF(Py_None);
     __Pyx_GIVEREF(Py_None);
     PyTuple_SET_ITEM(__pyx_t_2, 2, Py_None);
@@ -3901,17 +4504,17 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct _
 
     /* "(tree fragment)":12
  *     else:
- *         use_setstate = self.error is not None or self.train_d is not None or self.train_x is not None or self.weigths is not None
+ *         use_setstate = self.error is not None or self.train_d is not None or self.train_x is not None or self.type_function is not None or self.weigths is not None
  *     if use_setstate:             # <<<<<<<<<<<<<<
- *         return __pyx_unpickle_Perceptron, (type(self), 0xdf084dc, None), state
+ *         return __pyx_unpickle_Perceptron, (type(self), 0x74b76dc, None), state
  *     else:
  */
   }
 
   /* "(tree fragment)":15
- *         return __pyx_unpickle_Perceptron, (type(self), 0xdf084dc, None), state
+ *         return __pyx_unpickle_Perceptron, (type(self), 0x74b76dc, None), state
  *     else:
- *         return __pyx_unpickle_Perceptron, (type(self), 0xdf084dc, state)             # <<<<<<<<<<<<<<
+ *         return __pyx_unpickle_Perceptron, (type(self), 0x74b76dc, state)             # <<<<<<<<<<<<<<
  * def __setstate_cython__(self, __pyx_state):
  *     __pyx_unpickle_Perceptron__set_state(self, __pyx_state)
  */
@@ -3924,9 +4527,9 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct _
     __Pyx_INCREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     __Pyx_GIVEREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     PyTuple_SET_ITEM(__pyx_t_2, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    __Pyx_INCREF(__pyx_int_233866460);
-    __Pyx_GIVEREF(__pyx_int_233866460);
-    PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_int_233866460);
+    __Pyx_INCREF(__pyx_int_122386140);
+    __Pyx_GIVEREF(__pyx_int_122386140);
+    PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_int_122386140);
     __Pyx_INCREF(__pyx_v_state);
     __Pyx_GIVEREF(__pyx_v_state);
     PyTuple_SET_ITEM(__pyx_t_2, 2, __pyx_v_state);
@@ -3966,32 +4569,32 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_14__reduce_cython__(struct _
 
 /* "(tree fragment)":16
  *     else:
- *         return __pyx_unpickle_Perceptron, (type(self), 0xdf084dc, state)
+ *         return __pyx_unpickle_Perceptron, (type(self), 0x74b76dc, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_Perceptron__set_state(self, __pyx_state)
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_17__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
-static PyObject *__pyx_pw_10Perceptron_10Perceptron_17__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_19__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
+static PyObject *__pyx_pw_10Perceptron_10Perceptron_19__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_16__setstate_cython__(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
+  __pyx_r = __pyx_pf_10Perceptron_10Perceptron_18__setstate_cython__(((struct __pyx_obj_10Perceptron_Perceptron *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10Perceptron_10Perceptron_16__setstate_cython__(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_10Perceptron_10Perceptron_18__setstate_cython__(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__setstate_cython__", 0);
 
   /* "(tree fragment)":17
- *         return __pyx_unpickle_Perceptron, (type(self), 0xdf084dc, state)
+ *         return __pyx_unpickle_Perceptron, (type(self), 0x74b76dc, state)
  * def __setstate_cython__(self, __pyx_state):
  *     __pyx_unpickle_Perceptron__set_state(self, __pyx_state)             # <<<<<<<<<<<<<<
  */
@@ -4002,7 +4605,7 @@ static PyObject *__pyx_pf_10Perceptron_10Perceptron_16__setstate_cython__(struct
 
   /* "(tree fragment)":16
  *     else:
- *         return __pyx_unpickle_Perceptron, (type(self), 0xdf084dc, state)
+ *         return __pyx_unpickle_Perceptron, (type(self), 0x74b76dc, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_Perceptron__set_state(self, __pyx_state)
  */
@@ -4115,18 +4718,18 @@ static PyObject *__pyx_pf_10Perceptron___pyx_unpickle_Perceptron(CYTHON_UNUSED P
   /* "(tree fragment)":4
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
- *     if __pyx_checksum != 0xdf084dc:             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum != 0x74b76dc:             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xdf084dc = (error, rate_learning, train_d, train_x, weigths))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x74b76dc = (error, rate_learning, train_d, train_x, type_function, weigths))" % __pyx_checksum)
  */
-  __pyx_t_1 = ((__pyx_v___pyx_checksum != 0xdf084dc) != 0);
+  __pyx_t_1 = ((__pyx_v___pyx_checksum != 0x74b76dc) != 0);
   if (__pyx_t_1) {
 
     /* "(tree fragment)":5
  *     cdef object __pyx_result
- *     if __pyx_checksum != 0xdf084dc:
+ *     if __pyx_checksum != 0x74b76dc:
  *         from pickle import PickleError as __pyx_PickleError             # <<<<<<<<<<<<<<
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xdf084dc = (error, rate_learning, train_d, train_x, weigths))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x74b76dc = (error, rate_learning, train_d, train_x, type_function, weigths))" % __pyx_checksum)
  *     __pyx_result = Perceptron.__new__(__pyx_type)
  */
     __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 5, __pyx_L1_error)
@@ -4145,15 +4748,15 @@ static PyObject *__pyx_pf_10Perceptron___pyx_unpickle_Perceptron(CYTHON_UNUSED P
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
     /* "(tree fragment)":6
- *     if __pyx_checksum != 0xdf084dc:
+ *     if __pyx_checksum != 0x74b76dc:
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xdf084dc = (error, rate_learning, train_d, train_x, weigths))" % __pyx_checksum)             # <<<<<<<<<<<<<<
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x74b76dc = (error, rate_learning, train_d, train_x, type_function, weigths))" % __pyx_checksum)             # <<<<<<<<<<<<<<
  *     __pyx_result = Perceptron.__new__(__pyx_type)
  *     if __pyx_state is not None:
  */
     __pyx_t_2 = __Pyx_PyInt_From_long(__pyx_v___pyx_checksum); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 6, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_Incompatible_checksums_s_vs_0xdf, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 6, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_Incompatible_checksums_s_vs_0x74, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 6, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_INCREF(__pyx_v___pyx_PickleError);
@@ -4180,15 +4783,15 @@ static PyObject *__pyx_pf_10Perceptron___pyx_unpickle_Perceptron(CYTHON_UNUSED P
     /* "(tree fragment)":4
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
- *     if __pyx_checksum != 0xdf084dc:             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum != 0x74b76dc:             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xdf084dc = (error, rate_learning, train_d, train_x, weigths))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x74b76dc = (error, rate_learning, train_d, train_x, type_function, weigths))" % __pyx_checksum)
  */
   }
 
   /* "(tree fragment)":7
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xdf084dc = (error, rate_learning, train_d, train_x, weigths))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x74b76dc = (error, rate_learning, train_d, train_x, type_function, weigths))" % __pyx_checksum)
  *     __pyx_result = Perceptron.__new__(__pyx_type)             # <<<<<<<<<<<<<<
  *     if __pyx_state is not None:
  *         __pyx_unpickle_Perceptron__set_state(<Perceptron> __pyx_result, __pyx_state)
@@ -4214,7 +4817,7 @@ static PyObject *__pyx_pf_10Perceptron___pyx_unpickle_Perceptron(CYTHON_UNUSED P
   __pyx_t_3 = 0;
 
   /* "(tree fragment)":8
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xdf084dc = (error, rate_learning, train_d, train_x, weigths))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x74b76dc = (error, rate_learning, train_d, train_x, type_function, weigths))" % __pyx_checksum)
  *     __pyx_result = Perceptron.__new__(__pyx_type)
  *     if __pyx_state is not None:             # <<<<<<<<<<<<<<
  *         __pyx_unpickle_Perceptron__set_state(<Perceptron> __pyx_result, __pyx_state)
@@ -4237,7 +4840,7 @@ static PyObject *__pyx_pf_10Perceptron___pyx_unpickle_Perceptron(CYTHON_UNUSED P
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
     /* "(tree fragment)":8
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xdf084dc = (error, rate_learning, train_d, train_x, weigths))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x74b76dc = (error, rate_learning, train_d, train_x, type_function, weigths))" % __pyx_checksum)
  *     __pyx_result = Perceptron.__new__(__pyx_type)
  *     if __pyx_state is not None:             # <<<<<<<<<<<<<<
  *         __pyx_unpickle_Perceptron__set_state(<Perceptron> __pyx_result, __pyx_state)
@@ -4250,7 +4853,7 @@ static PyObject *__pyx_pf_10Perceptron___pyx_unpickle_Perceptron(CYTHON_UNUSED P
  *         __pyx_unpickle_Perceptron__set_state(<Perceptron> __pyx_result, __pyx_state)
  *     return __pyx_result             # <<<<<<<<<<<<<<
  * cdef __pyx_unpickle_Perceptron__set_state(Perceptron __pyx_result, tuple __pyx_state):
- *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.weigths = __pyx_state[4]
+ *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.type_function = __pyx_state[4]; __pyx_result.weigths = __pyx_state[5]
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v___pyx_result);
@@ -4283,8 +4886,8 @@ static PyObject *__pyx_pf_10Perceptron___pyx_unpickle_Perceptron(CYTHON_UNUSED P
  *         __pyx_unpickle_Perceptron__set_state(<Perceptron> __pyx_result, __pyx_state)
  *     return __pyx_result
  * cdef __pyx_unpickle_Perceptron__set_state(Perceptron __pyx_result, tuple __pyx_state):             # <<<<<<<<<<<<<<
- *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.weigths = __pyx_state[4]
- *     if len(__pyx_state) > 5 and hasattr(__pyx_result, '__dict__'):
+ *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.type_function = __pyx_state[4]; __pyx_result.weigths = __pyx_state[5]
+ *     if len(__pyx_state) > 6 and hasattr(__pyx_result, '__dict__'):
  */
 
 static PyObject *__pyx_f_10Perceptron___pyx_unpickle_Perceptron__set_state(struct __pyx_obj_10Perceptron_Perceptron *__pyx_v___pyx_result, PyObject *__pyx_v___pyx_state) {
@@ -4304,9 +4907,9 @@ static PyObject *__pyx_f_10Perceptron___pyx_unpickle_Perceptron__set_state(struc
   /* "(tree fragment)":12
  *     return __pyx_result
  * cdef __pyx_unpickle_Perceptron__set_state(Perceptron __pyx_result, tuple __pyx_state):
- *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.weigths = __pyx_state[4]             # <<<<<<<<<<<<<<
- *     if len(__pyx_state) > 5 and hasattr(__pyx_result, '__dict__'):
- *         __pyx_result.__dict__.update(__pyx_state[5])
+ *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.type_function = __pyx_state[4]; __pyx_result.weigths = __pyx_state[5]             # <<<<<<<<<<<<<<
+ *     if len(__pyx_state) > 6 and hasattr(__pyx_result, '__dict__'):
+ *         __pyx_result.__dict__.update(__pyx_state[6])
  */
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
@@ -4357,6 +4960,18 @@ static PyObject *__pyx_f_10Perceptron___pyx_unpickle_Perceptron__set_state(struc
   }
   __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 4, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
+  if (!(likely(PyString_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_GIVEREF(__pyx_t_1);
+  __Pyx_GOTREF(__pyx_v___pyx_result->type_function);
+  __Pyx_DECREF(__pyx_v___pyx_result->type_function);
+  __pyx_v___pyx_result->type_function = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+  if (unlikely(__pyx_v___pyx_state == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(1, 12, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 5, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
   if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v___pyx_result->weigths);
@@ -4366,16 +4981,16 @@ static PyObject *__pyx_f_10Perceptron___pyx_unpickle_Perceptron__set_state(struc
 
   /* "(tree fragment)":13
  * cdef __pyx_unpickle_Perceptron__set_state(Perceptron __pyx_result, tuple __pyx_state):
- *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.weigths = __pyx_state[4]
- *     if len(__pyx_state) > 5 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
- *         __pyx_result.__dict__.update(__pyx_state[5])
+ *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.type_function = __pyx_state[4]; __pyx_result.weigths = __pyx_state[5]
+ *     if len(__pyx_state) > 6 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
+ *         __pyx_result.__dict__.update(__pyx_state[6])
  */
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
     __PYX_ERR(1, 13, __pyx_L1_error)
   }
   __pyx_t_4 = PyTuple_GET_SIZE(__pyx_v___pyx_state); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(1, 13, __pyx_L1_error)
-  __pyx_t_5 = ((__pyx_t_4 > 5) != 0);
+  __pyx_t_5 = ((__pyx_t_4 > 6) != 0);
   if (__pyx_t_5) {
   } else {
     __pyx_t_3 = __pyx_t_5;
@@ -4388,9 +5003,9 @@ static PyObject *__pyx_f_10Perceptron___pyx_unpickle_Perceptron__set_state(struc
   if (__pyx_t_3) {
 
     /* "(tree fragment)":14
- *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.weigths = __pyx_state[4]
- *     if len(__pyx_state) > 5 and hasattr(__pyx_result, '__dict__'):
- *         __pyx_result.__dict__.update(__pyx_state[5])             # <<<<<<<<<<<<<<
+ *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.type_function = __pyx_state[4]; __pyx_result.weigths = __pyx_state[5]
+ *     if len(__pyx_state) > 6 and hasattr(__pyx_result, '__dict__'):
+ *         __pyx_result.__dict__.update(__pyx_state[6])             # <<<<<<<<<<<<<<
  */
     __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v___pyx_result), __pyx_n_s_dict); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 14, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
@@ -4401,7 +5016,7 @@ static PyObject *__pyx_f_10Perceptron___pyx_unpickle_Perceptron__set_state(struc
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(1, 14, __pyx_L1_error)
     }
-    __pyx_t_7 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 5, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 14, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 6, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 14, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __pyx_t_9 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
@@ -4423,9 +5038,9 @@ static PyObject *__pyx_f_10Perceptron___pyx_unpickle_Perceptron__set_state(struc
 
     /* "(tree fragment)":13
  * cdef __pyx_unpickle_Perceptron__set_state(Perceptron __pyx_result, tuple __pyx_state):
- *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.weigths = __pyx_state[4]
- *     if len(__pyx_state) > 5 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
- *         __pyx_result.__dict__.update(__pyx_state[5])
+ *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.type_function = __pyx_state[4]; __pyx_result.weigths = __pyx_state[5]
+ *     if len(__pyx_state) > 6 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
+ *         __pyx_result.__dict__.update(__pyx_state[6])
  */
   }
 
@@ -4433,8 +5048,8 @@ static PyObject *__pyx_f_10Perceptron___pyx_unpickle_Perceptron__set_state(struc
  *         __pyx_unpickle_Perceptron__set_state(<Perceptron> __pyx_result, __pyx_state)
  *     return __pyx_result
  * cdef __pyx_unpickle_Perceptron__set_state(Perceptron __pyx_result, tuple __pyx_state):             # <<<<<<<<<<<<<<
- *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.weigths = __pyx_state[4]
- *     if len(__pyx_state) > 5 and hasattr(__pyx_result, '__dict__'):
+ *     __pyx_result.error = __pyx_state[0]; __pyx_result.rate_learning = __pyx_state[1]; __pyx_result.train_d = __pyx_state[2]; __pyx_result.train_x = __pyx_state[3]; __pyx_result.type_function = __pyx_state[4]; __pyx_result.weigths = __pyx_state[5]
+ *     if len(__pyx_state) > 6 and hasattr(__pyx_result, '__dict__'):
  */
 
   /* function exit code */
@@ -4570,7 +5185,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  * 
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 272, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 272, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -4626,7 +5241,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  * 
  *             info.buf = PyArray_DATA(self)
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 276, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 276, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -4884,7 +5499,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *                 if   t == NPY_BYTE:        f = "b"
  *                 elif t == NPY_UBYTE:       f = "B"
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 306, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 306, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -5764,7 +6379,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  * 
  *         if ((child.byteorder == c'>' and little_endian) or
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 856, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 856, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -5832,7 +6447,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             # One could encode it in the format string and have Cython
  *             # complain instead, BUT: < and > in format strings also imply
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 860, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 860, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -5941,7 +6556,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  * 
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
-        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 880, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 880, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_Raise(__pyx_t_4, 0, 0, 0);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -6569,7 +7184,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
  * 
  * cdef inline int import_umath() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 1038, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 1038, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -6698,7 +7313,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
  * 
  * cdef inline int import_ufunc() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 1044, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 1044, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -6824,7 +7439,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 1050, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 1050, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -6887,6 +7502,7 @@ static PyObject *__pyx_tp_new_10Perceptron_Perceptron(PyTypeObject *t, CYTHON_UN
   p->train_x = Py_None; Py_INCREF(Py_None);
   p->train_d = Py_None; Py_INCREF(Py_None);
   p->error = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->type_function = ((PyObject*)Py_None); Py_INCREF(Py_None);
   return o;
 }
 
@@ -6902,6 +7518,7 @@ static void __pyx_tp_dealloc_10Perceptron_Perceptron(PyObject *o) {
   Py_CLEAR(p->train_x);
   Py_CLEAR(p->train_d);
   Py_CLEAR(p->error);
+  Py_CLEAR(p->type_function);
   (*Py_TYPE(o)->tp_free)(o);
 }
 
@@ -6945,11 +7562,12 @@ static PyMethodDef __pyx_methods_10Perceptron_Perceptron[] = {
   {"train", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10Perceptron_10Perceptron_3train, METH_VARARGS|METH_KEYWORDS, 0},
   {"per_epock", (PyCFunction)__pyx_pw_10Perceptron_10Perceptron_5per_epock, METH_O, 0},
   {"activate_function", (PyCFunction)__pyx_pw_10Perceptron_10Perceptron_7activate_function, METH_O, 0},
-  {"adjust_weigth", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10Perceptron_10Perceptron_9adjust_weigth, METH_VARARGS|METH_KEYWORDS, 0},
-  {"predict", (PyCFunction)__pyx_pw_10Perceptron_10Perceptron_11predict, METH_O, 0},
-  {"get_weights", (PyCFunction)__pyx_pw_10Perceptron_10Perceptron_13get_weights, METH_NOARGS, 0},
-  {"__reduce_cython__", (PyCFunction)__pyx_pw_10Perceptron_10Perceptron_15__reduce_cython__, METH_NOARGS, 0},
-  {"__setstate_cython__", (PyCFunction)__pyx_pw_10Perceptron_10Perceptron_17__setstate_cython__, METH_O, 0},
+  {"diff_function", (PyCFunction)__pyx_pw_10Perceptron_10Perceptron_9diff_function, METH_O, 0},
+  {"adjust_weigth", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10Perceptron_10Perceptron_11adjust_weigth, METH_VARARGS|METH_KEYWORDS, 0},
+  {"predict", (PyCFunction)__pyx_pw_10Perceptron_10Perceptron_13predict, METH_O, 0},
+  {"get_weights", (PyCFunction)__pyx_pw_10Perceptron_10Perceptron_15get_weights, METH_NOARGS, 0},
+  {"__reduce_cython__", (PyCFunction)__pyx_pw_10Perceptron_10Perceptron_17__reduce_cython__, METH_NOARGS, 0},
+  {"__setstate_cython__", (PyCFunction)__pyx_pw_10Perceptron_10Perceptron_19__setstate_cython__, METH_O, 0},
   {0, 0, 0, 0}
 };
 
@@ -7057,10 +7675,11 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
+  {&__pyx_kp_s_, __pyx_k_, sizeof(__pyx_k_), 0, 0, 1, 0},
   {&__pyx_kp_u_Format_string_allocated_too_shor, __pyx_k_Format_string_allocated_too_shor, sizeof(__pyx_k_Format_string_allocated_too_shor), 0, 1, 0, 0},
   {&__pyx_kp_u_Format_string_allocated_too_shor_2, __pyx_k_Format_string_allocated_too_shor_2, sizeof(__pyx_k_Format_string_allocated_too_shor_2), 0, 1, 0, 0},
   {&__pyx_n_s_ImportError, __pyx_k_ImportError, sizeof(__pyx_k_ImportError), 0, 0, 1, 1},
-  {&__pyx_kp_s_Incompatible_checksums_s_vs_0xdf, __pyx_k_Incompatible_checksums_s_vs_0xdf, sizeof(__pyx_k_Incompatible_checksums_s_vs_0xdf), 0, 0, 1, 0},
+  {&__pyx_kp_s_Incompatible_checksums_s_vs_0x74, __pyx_k_Incompatible_checksums_s_vs_0x74, sizeof(__pyx_k_Incompatible_checksums_s_vs_0x74), 0, 0, 1, 0},
   {&__pyx_kp_u_Non_native_byte_order_not_suppor, __pyx_k_Non_native_byte_order_not_suppor, sizeof(__pyx_k_Non_native_byte_order_not_suppor), 0, 1, 0, 0},
   {&__pyx_n_s_Perceptron, __pyx_k_Perceptron, sizeof(__pyx_k_Perceptron), 0, 0, 1, 1},
   {&__pyx_n_s_PickleError, __pyx_k_PickleError, sizeof(__pyx_k_PickleError), 0, 0, 1, 1},
@@ -7072,20 +7691,25 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_apply, __pyx_k_apply, sizeof(__pyx_k_apply), 0, 0, 1, 1},
   {&__pyx_n_s_array, __pyx_k_array, sizeof(__pyx_k_array), 0, 0, 1, 1},
   {&__pyx_n_s_axis, __pyx_k_axis, sizeof(__pyx_k_axis), 0, 0, 1, 1},
+  {&__pyx_n_s_b, __pyx_k_b, sizeof(__pyx_k_b), 0, 0, 1, 1},
   {&__pyx_n_s_choice, __pyx_k_choice, sizeof(__pyx_k_choice), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_dict, __pyx_k_dict, sizeof(__pyx_k_dict), 0, 0, 1, 1},
+  {&__pyx_n_s_diff_function, __pyx_k_diff_function, sizeof(__pyx_k_diff_function), 0, 0, 1, 1},
   {&__pyx_n_s_dot, __pyx_k_dot, sizeof(__pyx_k_dot), 0, 0, 1, 1},
   {&__pyx_n_s_epocks, __pyx_k_epocks, sizeof(__pyx_k_epocks), 0, 0, 1, 1},
   {&__pyx_n_s_erro, __pyx_k_erro, sizeof(__pyx_k_erro), 0, 0, 1, 1},
   {&__pyx_n_s_error, __pyx_k_error, sizeof(__pyx_k_error), 0, 0, 1, 1},
+  {&__pyx_n_s_exp, __pyx_k_exp, sizeof(__pyx_k_exp), 0, 0, 1, 1},
   {&__pyx_n_s_get_weights, __pyx_k_get_weights, sizeof(__pyx_k_get_weights), 0, 0, 1, 1},
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_index, __pyx_k_index, sizeof(__pyx_k_index), 0, 0, 1, 1},
   {&__pyx_n_s_join, __pyx_k_join, sizeof(__pyx_k_join), 0, 0, 1, 1},
+  {&__pyx_n_s_l, __pyx_k_l, sizeof(__pyx_k_l), 0, 0, 1, 1},
   {&__pyx_n_s_loc, __pyx_k_loc, sizeof(__pyx_k_loc), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
+  {&__pyx_n_s_math, __pyx_k_math, sizeof(__pyx_k_math), 0, 0, 1, 1},
   {&__pyx_n_s_mean, __pyx_k_mean, sizeof(__pyx_k_mean), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_kp_u_ndarray_is_not_C_contiguous, __pyx_k_ndarray_is_not_C_contiguous, sizeof(__pyx_k_ndarray_is_not_C_contiguous), 0, 1, 0, 0},
@@ -7122,14 +7746,16 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_train, __pyx_k_train, sizeof(__pyx_k_train), 0, 0, 1, 1},
   {&__pyx_n_s_train_d, __pyx_k_train_d, sizeof(__pyx_k_train_d), 0, 0, 1, 1},
   {&__pyx_n_s_train_x, __pyx_k_train_x, sizeof(__pyx_k_train_x), 0, 0, 1, 1},
+  {&__pyx_n_s_type_function, __pyx_k_type_function, sizeof(__pyx_k_type_function), 0, 0, 1, 1},
   {&__pyx_kp_u_unknown_dtype_code_in_numpy_pxd, __pyx_k_unknown_dtype_code_in_numpy_pxd, sizeof(__pyx_k_unknown_dtype_code_in_numpy_pxd), 0, 1, 0, 0},
   {&__pyx_n_s_update, __pyx_k_update, sizeof(__pyx_k_update), 0, 0, 1, 1},
   {&__pyx_n_s_values, __pyx_k_values, sizeof(__pyx_k_values), 0, 0, 1, 1},
   {&__pyx_n_s_x, __pyx_k_x, sizeof(__pyx_k_x), 0, 0, 1, 1},
+  {&__pyx_n_s_y, __pyx_k_y, sizeof(__pyx_k_y), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 34, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(2, 272, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(2, 856, __pyx_L1_error)
   __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(2, 1038, __pyx_L1_error)
@@ -7142,16 +7768,16 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "Perceptron.pyx":50
+  /* "Perceptron.pyx":55
  * 
  *     cpdef per_epock(self, row):
  *         cdef np.ndarray x = row.values[:-1]             # <<<<<<<<<<<<<<
  *         x = np.array(x.tolist() + [-1])
  *         cdef int d = row.values[-1]
  */
-  __pyx_slice_ = PySlice_New(Py_None, __pyx_int_neg_1, Py_None); if (unlikely(!__pyx_slice_)) __PYX_ERR(0, 50, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice_);
-  __Pyx_GIVEREF(__pyx_slice_);
+  __pyx_slice__2 = PySlice_New(Py_None, __pyx_int_neg_1, Py_None); if (unlikely(!__pyx_slice__2)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__2);
+  __Pyx_GIVEREF(__pyx_slice__2);
 
   /* "../../../../../../../../ProgramData/Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":272
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
@@ -7160,9 +7786,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(2, 272, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__2);
-  __Pyx_GIVEREF(__pyx_tuple__2);
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(2, 272, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
 
   /* "../../../../../../../../ProgramData/Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":276
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
@@ -7171,9 +7797,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *             info.buf = PyArray_DATA(self)
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(2, 276, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__3);
-  __Pyx_GIVEREF(__pyx_tuple__3);
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(2, 276, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__4);
+  __Pyx_GIVEREF(__pyx_tuple__4);
 
   /* "../../../../../../../../ProgramData/Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":306
  *                 if ((descr.byteorder == c'>' and little_endian) or
@@ -7182,9 +7808,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *                 if   t == NPY_BYTE:        f = "b"
  *                 elif t == NPY_UBYTE:       f = "B"
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(2, 306, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__4);
-  __Pyx_GIVEREF(__pyx_tuple__4);
+  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(2, 306, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
 
   /* "../../../../../../../../ProgramData/Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":856
  * 
@@ -7193,9 +7819,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *         if ((child.byteorder == c'>' and little_endian) or
  */
-  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(2, 856, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__5);
-  __Pyx_GIVEREF(__pyx_tuple__5);
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(2, 856, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__6);
+  __Pyx_GIVEREF(__pyx_tuple__6);
 
   /* "../../../../../../../../ProgramData/Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":880
  *             t = child.type_num
@@ -7204,9 +7830,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
-  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(2, 880, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__6);
-  __Pyx_GIVEREF(__pyx_tuple__6);
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(2, 880, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__7);
+  __Pyx_GIVEREF(__pyx_tuple__7);
 
   /* "../../../../../../../../ProgramData/Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":1038
  *         _import_array()
@@ -7215,9 +7841,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * cdef inline int import_umath() except -1:
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(2, 1038, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__7);
-  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(2, 1038, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__8);
+  __Pyx_GIVEREF(__pyx_tuple__8);
 
   /* "../../../../../../../../ProgramData/Anaconda3/lib/site-packages/Cython/Includes/numpy/__init__.pxd":1044
  *         _import_umath()
@@ -7226,19 +7852,19 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * cdef inline int import_ufunc() except -1:
  */
-  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(2, 1044, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__8);
-  __Pyx_GIVEREF(__pyx_tuple__8);
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(2, 1044, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
 
   /* "(tree fragment)":1
  * def __pyx_unpickle_Perceptron(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
  */
-  __pyx_tuple__9 = PyTuple_Pack(5, __pyx_n_s_pyx_type, __pyx_n_s_pyx_checksum, __pyx_n_s_pyx_state, __pyx_n_s_pyx_PickleError, __pyx_n_s_pyx_result); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(1, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__9);
-  __Pyx_GIVEREF(__pyx_tuple__9);
-  __pyx_codeobj__10 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__9, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Perceptron, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__10)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(5, __pyx_n_s_pyx_type, __pyx_n_s_pyx_checksum, __pyx_n_s_pyx_state, __pyx_n_s_pyx_PickleError, __pyx_n_s_pyx_result); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__10);
+  __Pyx_GIVEREF(__pyx_tuple__10);
+  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Perceptron, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -7248,9 +7874,11 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
 static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  __pyx_float_0_5 = PyFloat_FromDouble(0.5); if (unlikely(!__pyx_float_0_5)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_int_233866460 = PyInt_FromLong(233866460L); if (unlikely(!__pyx_int_233866460)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_122386140 = PyInt_FromLong(122386140L); if (unlikely(!__pyx_int_122386140)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_neg_1 = PyInt_FromLong(-1); if (unlikely(!__pyx_int_neg_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
@@ -7294,20 +7922,21 @@ static int __Pyx_modinit_type_init_code(void) {
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
   __pyx_vtabptr_10Perceptron_Perceptron = &__pyx_vtable_10Perceptron_Perceptron;
-  __pyx_vtable_10Perceptron_Perceptron.train = (PyObject *(*)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, PyObject *, int, double, PyObject *, int __pyx_skip_dispatch))__pyx_f_10Perceptron_10Perceptron_train;
+  __pyx_vtable_10Perceptron_Perceptron.train = (PyObject *(*)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, PyObject *, int, double, PyObject *, PyObject *, int __pyx_skip_dispatch))__pyx_f_10Perceptron_10Perceptron_train;
   __pyx_vtable_10Perceptron_Perceptron.per_epock = (PyObject *(*)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, int __pyx_skip_dispatch))__pyx_f_10Perceptron_10Perceptron_per_epock;
   __pyx_vtable_10Perceptron_Perceptron.activate_function = (PyObject *(*)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, int __pyx_skip_dispatch))__pyx_f_10Perceptron_10Perceptron_activate_function;
-  __pyx_vtable_10Perceptron_Perceptron.adjust_weigth = (PyObject *(*)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, double, int __pyx_skip_dispatch))__pyx_f_10Perceptron_10Perceptron_adjust_weigth;
+  __pyx_vtable_10Perceptron_Perceptron.diff_function = (PyObject *(*)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, int __pyx_skip_dispatch))__pyx_f_10Perceptron_10Perceptron_diff_function;
+  __pyx_vtable_10Perceptron_Perceptron.adjust_weigth = (PyObject *(*)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, double, PyObject *, int __pyx_skip_dispatch))__pyx_f_10Perceptron_10Perceptron_adjust_weigth;
   __pyx_vtable_10Perceptron_Perceptron.predict = (PyObject *(*)(struct __pyx_obj_10Perceptron_Perceptron *, PyObject *, int __pyx_skip_dispatch))__pyx_f_10Perceptron_10Perceptron_predict;
   __pyx_vtable_10Perceptron_Perceptron.get_weights = (PyObject *(*)(struct __pyx_obj_10Perceptron_Perceptron *, int __pyx_skip_dispatch))__pyx_f_10Perceptron_10Perceptron_get_weights;
-  if (PyType_Ready(&__pyx_type_10Perceptron_Perceptron) < 0) __PYX_ERR(0, 11, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_10Perceptron_Perceptron) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
   __pyx_type_10Perceptron_Perceptron.tp_print = 0;
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_10Perceptron_Perceptron.tp_dictoffset && __pyx_type_10Perceptron_Perceptron.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_10Perceptron_Perceptron.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (__Pyx_SetVtable(__pyx_type_10Perceptron_Perceptron.tp_dict, __pyx_vtabptr_10Perceptron_Perceptron) < 0) __PYX_ERR(0, 11, __pyx_L1_error)
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Perceptron, (PyObject *)&__pyx_type_10Perceptron_Perceptron) < 0) __PYX_ERR(0, 11, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_10Perceptron_Perceptron) < 0) __PYX_ERR(0, 11, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_10Perceptron_Perceptron.tp_dict, __pyx_vtabptr_10Perceptron_Perceptron) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Perceptron, (PyObject *)&__pyx_type_10Perceptron_Perceptron) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_10Perceptron_Perceptron) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
   __pyx_ptype_10Perceptron_Perceptron = &__pyx_type_10Perceptron_Perceptron;
   __Pyx_RefNannyFinishContext();
   return 0;
@@ -7577,6 +8206,18 @@ if (!__Pyx_RefNanny) {
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_numpy, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_1) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "Perceptron.pyx":10
+ * cimport numpy as np
+ * 
+ * import math             # <<<<<<<<<<<<<<
+ * 
+ * cdef class Perceptron:
+ */
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_math, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_math, __pyx_t_1) < 0) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "(tree fragment)":1
@@ -8608,6 +9249,250 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
         }
     }
     return __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL);
+}
+#endif
+
+/* PyIntBinop */
+#if !CYTHON_COMPILING_IN_PYPY
+static PyObject* __Pyx_PyInt_AddCObj(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, CYTHON_UNUSED int inplace) {
+    #if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_CheckExact(op2))) {
+        const long a = intval;
+        long x;
+        long b = PyInt_AS_LONG(op2);
+            x = (long)((unsigned long)a + b);
+            if (likely((x^a) >= 0 || (x^b) >= 0))
+                return PyInt_FromLong(x);
+            return PyLong_Type.tp_as_number->nb_add(op1, op2);
+    }
+    #endif
+    #if CYTHON_USE_PYLONG_INTERNALS
+    if (likely(PyLong_CheckExact(op2))) {
+        const long a = intval;
+        long b, x;
+#ifdef HAVE_LONG_LONG
+        const PY_LONG_LONG lla = intval;
+        PY_LONG_LONG llb, llx;
+#endif
+        const digit* digits = ((PyLongObject*)op2)->ob_digit;
+        const Py_ssize_t size = Py_SIZE(op2);
+        if (likely(__Pyx_sst_abs(size) <= 1)) {
+            b = likely(size) ? digits[0] : 0;
+            if (size == -1) b = -b;
+        } else {
+            switch (size) {
+                case -2:
+                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                        b = -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
+                        llb = -(PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                    CYTHON_FALLTHROUGH;
+                case 2:
+                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                        b = (long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
+                        llb = (PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                    CYTHON_FALLTHROUGH;
+                case -3:
+                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                        b = -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
+                        llb = -(PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                    CYTHON_FALLTHROUGH;
+                case 3:
+                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                        b = (long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
+                        llb = (PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                    CYTHON_FALLTHROUGH;
+                case -4:
+                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                        b = -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
+                        llb = -(PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                    CYTHON_FALLTHROUGH;
+                case 4:
+                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                        b = (long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
+                        llb = (PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                    CYTHON_FALLTHROUGH;
+                default: return PyLong_Type.tp_as_number->nb_add(op1, op2);
+            }
+        }
+                x = a + b;
+            return PyLong_FromLong(x);
+#ifdef HAVE_LONG_LONG
+        long_long:
+                llx = lla + llb;
+            return PyLong_FromLongLong(llx);
+#endif
+        
+        
+    }
+    #endif
+    if (PyFloat_CheckExact(op2)) {
+        const long a = intval;
+        double b = PyFloat_AS_DOUBLE(op2);
+            double result;
+            PyFPE_START_PROTECT("add", return NULL)
+            result = ((double)a) + (double)b;
+            PyFPE_END_PROTECT(result)
+            return PyFloat_FromDouble(result);
+    }
+    return (inplace ? PyNumber_InPlaceAdd : PyNumber_Add)(op1, op2);
+}
+#endif
+
+/* PyIntBinop */
+#if !CYTHON_COMPILING_IN_PYPY
+static PyObject* __Pyx_PyInt_SubtractCObj(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, CYTHON_UNUSED int inplace) {
+    #if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_CheckExact(op2))) {
+        const long a = intval;
+        long x;
+        long b = PyInt_AS_LONG(op2);
+            x = (long)((unsigned long)a - b);
+            if (likely((x^a) >= 0 || (x^~b) >= 0))
+                return PyInt_FromLong(x);
+            return PyLong_Type.tp_as_number->nb_subtract(op1, op2);
+    }
+    #endif
+    #if CYTHON_USE_PYLONG_INTERNALS
+    if (likely(PyLong_CheckExact(op2))) {
+        const long a = intval;
+        long b, x;
+#ifdef HAVE_LONG_LONG
+        const PY_LONG_LONG lla = intval;
+        PY_LONG_LONG llb, llx;
+#endif
+        const digit* digits = ((PyLongObject*)op2)->ob_digit;
+        const Py_ssize_t size = Py_SIZE(op2);
+        if (likely(__Pyx_sst_abs(size) <= 1)) {
+            b = likely(size) ? digits[0] : 0;
+            if (size == -1) b = -b;
+        } else {
+            switch (size) {
+                case -2:
+                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                        b = -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
+                        llb = -(PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                    CYTHON_FALLTHROUGH;
+                case 2:
+                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                        b = (long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
+                        llb = (PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                    CYTHON_FALLTHROUGH;
+                case -3:
+                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                        b = -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
+                        llb = -(PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                    CYTHON_FALLTHROUGH;
+                case 3:
+                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                        b = (long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
+                        llb = (PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                    CYTHON_FALLTHROUGH;
+                case -4:
+                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                        b = -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
+                        llb = -(PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                    CYTHON_FALLTHROUGH;
+                case 4:
+                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                        b = (long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+#ifdef HAVE_LONG_LONG
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
+                        llb = (PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+#endif
+                    }
+                    CYTHON_FALLTHROUGH;
+                default: return PyLong_Type.tp_as_number->nb_subtract(op1, op2);
+            }
+        }
+                x = a - b;
+            return PyLong_FromLong(x);
+#ifdef HAVE_LONG_LONG
+        long_long:
+                llx = lla - llb;
+            return PyLong_FromLongLong(llx);
+#endif
+        
+        
+    }
+    #endif
+    if (PyFloat_CheckExact(op2)) {
+        const long a = intval;
+        double b = PyFloat_AS_DOUBLE(op2);
+            double result;
+            PyFPE_START_PROTECT("subtract", return NULL)
+            result = ((double)a) - (double)b;
+            PyFPE_END_PROTECT(result)
+            return PyFloat_FromDouble(result);
+    }
+    return (inplace ? PyNumber_InPlaceSubtract : PyNumber_Subtract)(op1, op2);
 }
 #endif
 

@@ -229,5 +229,37 @@ cdef class NaivyBayes:
 
 
 
+cdef class RegressaoLogistica:
+    cdef object weigths
+    
+    cpdef train(self, object train_data, object class_d, int epocks, double rate_learning_final):
+        self.weigths = np.random.random((1,train_data.shape[1] + 1))
+        cdef int epock
+        cdef int i
+        bias = pd.DataFrame(np.ones(train_data.shape[0]))
+        train_data = train_data.join(bias)
+        print(train_data)
 
+        for epock in range(epocks):
+            gradiente = np.zeros((1,train_data.shape[1]))
+            train_data = train_data.loc[np.random.choice(
+                    train_data.index, train_data.shape[0], replace = False
+            )] # Shuffle train x
+            class_d = class_d.loc[train_data.index] # Shuffle train d
             
+            for i in range(train_data.shape[0]):
+                x = train_data.iloc[i,:]
+                u = np.dot(x, self.weigths.T)
+                gradiente += (self.sigmoid(u) - class_d[i])*x
+            self.weigths += rate_learning_final*gradiente
+
+    
+    cpdef sigmoid(self,u):
+        return 1 / (1 + np.exp(-u))
+
+    cpdef predict(self, data, limite = 0.5):
+        data = np.array(list(data) + [1] )
+        u = np.dot(data, self.weigths.T)
+        print(u)
+        y = u >= limite
+        return (y.astype('int'))

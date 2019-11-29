@@ -82,7 +82,7 @@ cpdef label_encode( index, collumn = ""):
     if collumn in index:
         return 1
     else:
-        return 0
+        return -1
 
 
 cpdef normalize(data):

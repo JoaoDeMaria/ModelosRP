@@ -62,19 +62,19 @@ cpdef metrics(object model, object data, object class_d,
 
 
 # Métodos para dividir entre treino e teste
-cpdef train_test(data, class_d):
-    train_x, test_x = _split_data_(data)
-    train_d = class_d.iloc[train_x.index]
-    test_d = class_d.drop(train_d.index)
-    return train_x,test_x,train_d,test_d
+    cpdef train_test(data, class_d):
+        train_x, test_x = _split_data_(data)
+        train_d = class_d.iloc[train_x.index]
+        test_d = class_d.drop(train_d.index)
+        return train_x,test_x,train_d,test_d
 
-cdef _split_data_(data):
-    index_random = _random_index_(data,0.8)
-    return data.loc[index_random],data.drop(index_random)
+    cdef _split_data_(data):
+        index_random = _random_index_(data,0.8)
+        return data.loc[index_random],data.drop(index_random)
 
-cdef _random_index_(data,count):
-    cdef int random_count = int(len(data) * count)
-    return np.random.choice(data.index,random_count,replace = False)
+    cdef _random_index_(data,count):
+        cdef int random_count = int(len(data) * count)
+        return np.random.choice(data.index,random_count,replace = False)
 
 
 # Métodos para tratar os dados 

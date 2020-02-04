@@ -12,7 +12,6 @@ import utils
 import Models
 import re
 
-from Perceptron import Perceptron 
 from utils import label_encode, train_test, normalize, graphic_of_superficie, metrics
 from collections import ChainMap
 
@@ -21,7 +20,7 @@ _list_series_ = []
 
 def Main():
     global _bag_words_, _list_series_
-    iris = pd.read_csv('Data/Iris_data.csv')
+    iris = pd.read_csv('Data/iris.csv')
     class_d = iris['species'].apply(label_encode, collumn="setosa")
     
     iris.drop(['species'], axis = 1, inplace=True)
